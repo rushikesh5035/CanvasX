@@ -17,6 +17,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import ThemeSwitcher from "./theme-switcher";
 
 const Header = () => {
   const { theme, setTheme } = useTheme();
@@ -46,29 +47,11 @@ const Header = () => {
             className="flex flex-1 items-center
            justify-end gap-3"
           >
-            <Button
-              variant="outline"
-              size="icon"
-              className="relative rounded-md h-9 w-9"
-              onClick={() => setTheme(isDark ? "light" : "dark")}
-            >
-              <SunIcon
-                className={cn(
-                  "absolute h-5 w-5 transition",
-                  isDark ? "scale-100" : "scale-0"
-                )}
-              />
-              <MoonIcon
-                className={cn(
-                  "absolute h-5 w-5 transition",
-                  isDark ? "scale-0" : "scale-100"
-                )}
-              />
-            </Button>
+            <ThemeSwitcher />
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Avatar className="h-8 w-8 shrink-0 rounded-full">
+                  <Avatar className="h-8 w-8 shrink-0 rounded-full hover:cursor-pointer">
                     <AvatarImage
                       src={user?.picture || ""}
                       alt={user?.given_name || ""}
