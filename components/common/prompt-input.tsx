@@ -10,15 +10,6 @@ import { cn } from "@/lib/utils";
 import { Spinner } from "../ui/spinner";
 import { CornerDownLeftIcon } from "lucide-react";
 
-// interface PromptType {
-//   promptText: string;
-//   setPromptText: (value: string) => void;
-//   isLoading?: boolean;
-//   hideSubmitBtn?: boolean;
-//   className?: string;
-//   onSubmit?: () => void;
-// }
-
 interface PropsType {
   promptText: string;
   setPromptText: (value: string) => void;
@@ -41,7 +32,7 @@ const AIPromptInput = ({
       <InputGroup
         className={cn(
           "min-h-[172px] rounded-3xl bg-background ",
-          className && className
+          className && className,
         )}
       >
         <InputGroupTextarea
