@@ -1,13 +1,9 @@
-import { Button } from "@/components/ui/button";
-import { ArrowUpIcon } from "lucide-react";
+import HeroSection from "@/components/common/hero-section";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center gap-4">
-      <Button>Button</Button>
-      <Button variant="outline" size="icon" aria-label="Submit">
-        <ArrowUpIcon />
-      </Button>
+    <div className="w-full min-h-screen">
+      <HeroSection />
     </div>
   );
 }
