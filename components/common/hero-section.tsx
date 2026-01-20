@@ -5,13 +5,32 @@ import AIPromptInput from "./prompt-input";
 import { Suggestion, Suggestions } from "../ai-elements/suggestion";
 import { promptSuggestions } from "@/data/prompts";
 import Header from "./header";
+import { useCreateProject, useGetProjects } from "@/features/use-project";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { Spinner } from "../ui/spinner";
+import { ProjectType } from "@/types/project";
+import ProjectCard from "./projectCard";
 
 const HeroSection = () => {
   const [promptText, setPromptText] = useState<string>("");
 
+  const { user } = useKindeBrowserClient();
+
+  const userId = user?.id;
+
+  const { data: projects, isLoading, isError } = useGetProjects(userId);
+
+  const { mutate, isPending } = useCreateProject();
+
   const handlePromptSuggestionClick = (val: string) => {
     setPromptText(val);
   };
+
+  const handleSubmit = () => {
+    if (!promptText) return;
+    mutate(promptText);
+  };
+
   return (
     <div className="w-full min-h-screen">
       <div className="flex flex-col">
@@ -47,6 +66,8 @@ const HeroSection = () => {
                   className="ring-2 ring-primary"
                   promptText={promptText}
                   setPromptText={setPromptText}
+                  isLoading={isPending}
+                  onSubmit={handleSubmit}
                 />
               </div>
 
@@ -94,6 +115,29 @@ const HeroSection = () => {
       </div>
 
       {/* Recent Project Section */}
+      <div className="w-full py-10">
+        <div className="mx-auto max-w-3xl">
+          {userId && (
+            <div>
+              <h1 className="font-medium text-xl tracking-tight">
+                Recent Projects
+              </h1>
+              {isLoading ? (
+                <div className="flex items-center justify-center py-2">
+                  <Spinner className="size-10" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                  {projects?.map((project: ProjectType) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {isError && <p className="text-red-500">Failed to load projects</p>}
+        </div>
+      </div>
     </div>
   );
 };
