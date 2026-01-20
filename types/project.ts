@@ -15,4 +15,6 @@ export type FrameType = {
   projectId?: string;
   createdAt: Date;
   updatedAt?: Date;
+
+  isLoading?: boolean;
 };
