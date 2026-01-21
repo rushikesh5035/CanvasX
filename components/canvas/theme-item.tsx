@@ -1,7 +1,6 @@
 import { parseThemeColors, ThemeType } from "@/lib/themes";
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "lucide-react";
-import React from "react";
 
 const ThemeItem = ({
   theme,

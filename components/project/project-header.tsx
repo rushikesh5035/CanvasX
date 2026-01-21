@@ -9,7 +9,10 @@ const ProjectHeader = ({ projectName }: { projectName?: string }) => {
 
   return (
     <div className="sticky top-0">
-      <header className="border-b border-border/40">
+      <header
+        className="border-b border-border/40
+    bg-card/50 backdrop-blur-sm"
+      >
         <div className="flex items-center justify-between px-4 py-2">
           <div className="flex items-center gap-4">
             <Logo />
@@ -21,7 +24,7 @@ const ProjectHeader = ({ projectName }: { projectName?: string }) => {
             >
               <ArrowLeftIcon className="size-4" />
             </Button>
-            <p className="inline-block max-w-[200px] truncate font-medium">
+            <p className="max-w-[200px] truncate font-medium">
               {projectName || "Untitled Project"}
             </p>
           </div>
