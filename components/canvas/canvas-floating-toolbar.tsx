@@ -11,14 +11,24 @@ import { cn } from "@/lib/utils";
 import ThemeSelector from "./theme-selector";
 import { Separator } from "../ui/separator";
 
-const CanvasFloatingToolbar = () => {
+const CanvasFloatingToolbar = ({
+  projectId,
+  isScreenshotting,
+  onScreenshot,
+}: {
+  projectId: string;
+  isScreenshotting?: boolean;
+  onScreenshot?: () => void;
+}) => {
   const { themes, theme: currentTheme, setTheme } = useCanvas();
-
   const [promptText, setPromptText] = useState<string>("");
 
   return (
-    <div className="fixed top-6 left-1/2 -translate-x-1/2">
-      <div className="w-full max-w-2xl bg-background dark:bg-gray-950 rounded-full shadow-xl border">
+    <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
+      <div
+        className="w-full max-w-2xl bg-background
+     dark:bg-gray-950 rounded-full shadow-xl border"
+      >
         <div className="flex flex-row items-center gap-2 px-3">
           <Popover>
             <PopoverTrigger asChild>
@@ -50,8 +60,7 @@ const CanvasFloatingToolbar = () => {
                   bg-linear-to-r
                  from-purple-500 to-indigo-600
                   text-white rounded-2xl
-                  shadow-lg shadow-purple-200/50 cursor-pointer
-                "
+                  shadow-lg shadow-purple-200/50 cursor-pointer"
               >
                 Design
               </Button>
