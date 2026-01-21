@@ -1,14 +1,36 @@
-import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import Logo from "../common/logo";
+import { Button } from "../ui/button";
+import { ArrowLeftIcon } from "lucide-react";
+import ThemeSwitcher from "../common/theme-switcher";
 
 const ProjectHeader = ({ projectName }: { projectName?: string }) => {
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
 
   return (
     <div className="sticky top-0">
-      <header className="border-b border-border/40"></header>
+      <header className="border-b border-border/40">
+        <div className="flex items-center justify-between px-4 py-2">
+          <div className="flex items-center gap-4">
+            <Logo />
+            <Button
+              size="icon-sm"
+              variant="ghost"
+              className="rounded-full bg-muted! hover:cursor-pointer"
+              onClick={() => router.push("/")}
+            >
+              <ArrowLeftIcon className="size-4" />
+            </Button>
+            <p className="inline-block max-w-[200px] truncate font-medium">
+              {projectName || "Untitled Project"}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <ThemeSwitcher />
+          </div>
+        </div>
+      </header>
     </div>
   );
 };
