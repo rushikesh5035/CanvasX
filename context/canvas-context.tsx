@@ -51,7 +51,7 @@ export const CanvasProvider = ({
     initialThemeId || THEME_LIST[0].id,
   );
 
-  const [frames, setFrames] = useState<FrameType[]>(initialFrames);
+  const [frames, setFrames] = useState<FrameType[]>(initialFrames || []);
 
   const [selectedFrameId, setSelectedFrameId] = useState<string | null>(null);
 
@@ -62,8 +62,8 @@ export const CanvasProvider = ({
   const theme = THEME_LIST.find((theme) => theme.id === themeId);
 
   const selectedFrame =
-    selectedFrameId && frames.length != 0
-      ? frames.find((frame) => frame.id === selectedFrameId) || null
+    selectedFrameId && frames.length !== 0
+      ? frames.find((f) => f.id === selectedFrameId) || null
       : null;
 
   // update the loading state inngest realtime event
