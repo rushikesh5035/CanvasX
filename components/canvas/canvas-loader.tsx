@@ -5,7 +5,7 @@ import { Spinner } from "../ui/spinner";
 const CanvasLoader = ({
   status,
 }: {
-  status?: LoadingStatusType | "fetching";
+  status?: LoadingStatusType | "fetching" | "finalizing";
 }) => {
   return (
     <div
@@ -18,6 +18,7 @@ const CanvasLoader = ({
         status === "running" && "bg-amber-500 text-white",
         status === "analyzing" && "bg-blue-500 text-white",
         status === "generating" && "bg-purple-500 text-white",
+        status === "finalizing" && "bg-purple-500 text-white",
       )}
     >
       <Spinner className="w-4 h-4 stroke-3!" />
