@@ -7,7 +7,6 @@ import { TOOL_MODE_ENUM, ToolModeType } from "@/constant/canvas";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import CanvasControls from "./canvas-control";
 import DeviceFrame from "./device-frame";
-import DeviceFrameSkeleton from "./device-frame-skeleton";
 import HtmlDialog from "./html-dialog";
 import { toast } from "sonner";
 import axios from "axios";
