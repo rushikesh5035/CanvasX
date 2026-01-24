@@ -62,7 +62,7 @@ const DeviceFramToolbar = ({
       className={cn(
         `absolute -mt-2 flex items-center justify-between gap-2 rounded-full z-50`,
         isSelected
-          ? `left-1/2 -translate-x-1/2 border bg-card dark:bg-muted pl-2 py-1 shadown-sm min-w-[260px] h-[35px]`
+          ? `left-1/2 -translate-x-1/2 border bg-card dark:bg-muted pl-2 py-1 shadown-sm min-w-65 h-8.75`
           : "w-[150px h-auto] left-10 ",
       )}
       style={{
@@ -88,14 +88,14 @@ const DeviceFramToolbar = ({
 
       {isSelected && (
         <>
-          <Separator orientation="vertical" className="h-5! bg-border" />
-          <ButtonGroup className="gap-px! justify-end pr-2! h-full ">
+          <Separator orientation="vertical" className="h-5 bg-border" />
+          <ButtonGroup className="gap-px justify-end">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     disabled={disabled}
-                    size="icon-xs"
+                    size="sm"
                     variant="ghost"
                     className="rounded-full dark:hover:bg-white/20 hover:bg-muted cursor-pointer"
                     onClick={onOpenHtmlDialog}
@@ -112,8 +112,8 @@ const DeviceFramToolbar = ({
                 <TooltipTrigger asChild>
                   <Button
                     disabled={disabled || isDownloading}
-                    size="icon-xs"
-                    className="rounded-full!"
+                    size="icon-sm"
+                    className="rounded-full dark:hover:bg-white/20 hover:bg-muted cursor-pointer"
                     variant="ghost"
                     onClick={onDownloadPng}
                   >

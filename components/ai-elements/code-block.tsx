@@ -385,7 +385,8 @@ export const CodeBlockContent = ({
     [code, language, rawTokens],
   );
 
-  const [tokenized, setTokenized] = useState<TokenizedCode>(getInitialTokenized);
+  const [tokenized, setTokenized] =
+    useState<TokenizedCode>(getInitialTokenized);
 
   useEffect(() => {
     // Subscribe to async highlighting result
