@@ -1,4 +1,3 @@
-import { generateProjectName } from "@/app/action/action";
 import { inngest } from "@/inngest/client";
 import prisma from "@/lib/prisma";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -130,6 +129,49 @@ export async function PATCH(
     return NextResponse.json(
       {
         error: "Failed to update project",
+      },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    const session = await getKindeServerSession();
+    const user = await session?.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    const userId = user.id;
+
+    // First delete all frames associated with the project
+    await prisma.frame.deleteMany({
+      where: {
+        projectId: id,
+      },
+    });
+
+    // Then delete the project
+    await prisma.project.delete({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Project deleted successfully",
+    });
+  } catch (error) {
+    console.log("Error deleting project:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to delete project",
       },
       { status: 500 },
     );

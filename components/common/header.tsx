@@ -20,8 +20,6 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import ThemeSwitcher from "./theme-switcher";
 
 const Header = () => {
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
   const { user } = useKindeBrowserClient();
 
   return (
@@ -51,7 +49,7 @@ const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Avatar className="h-8 w-8 shrink-0 rounded-full hover:cursor-pointer">
+                  <Avatar className="h-9 w-9 shrink-0 rounded-full hover:cursor-pointer">
                     <AvatarImage
                       src={user?.picture || ""}
                       alt={user?.given_name || ""}
