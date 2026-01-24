@@ -59,7 +59,7 @@ const HeroSection = () => {
 
             <div
               className="flex w-full max-w-3xl flex-col
-            item-center gap-8 relative z-50"
+            item-center gap-8 relative z-10"
             >
               <div className="w-full">
                 <AIPromptInput
