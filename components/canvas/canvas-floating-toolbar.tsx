@@ -10,6 +10,11 @@ import { parseThemeColors } from "@/lib/themes";
 import { cn } from "@/lib/utils";
 import ThemeSelector from "./theme-selector";
 import { Separator } from "../ui/separator";
+import {
+  useGenerateProjectById,
+  useUpdateProject,
+} from "@/features/use-project-id";
+import { Spinner } from "../ui/spinner";
 
 const CanvasFloatingToolbar = ({
   projectId,
@@ -22,6 +27,20 @@ const CanvasFloatingToolbar = ({
 }) => {
   const { themes, theme: currentTheme, setTheme } = useCanvas();
   const [promptText, setPromptText] = useState<string>("");
+
+  const { mutate, isPending } = useGenerateProjectById(projectId);
+
+  const updateProject = useUpdateProject(projectId);
+
+  const handleAIGenerate = () => {
+    if (!promptText) return;
+    mutate(promptText);
+  };
+
+  const handleUpdate = () => {
+    if (!currentTheme) return;
+    updateProject.mutate(currentTheme.id);
+  };
 
   return (
     <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
@@ -61,8 +80,9 @@ const CanvasFloatingToolbar = ({
                  from-purple-500 to-indigo-600
                   text-white rounded-2xl
                   shadow-lg shadow-purple-200/50 cursor-pointer"
+                onClick={handleAIGenerate}
               >
-                Design
+                {isPending ? <Spinner /> : <>Design</>}
               </Button>
             </PopoverContent>
           </Popover>
@@ -118,16 +138,29 @@ const CanvasFloatingToolbar = ({
               variant="outline"
               size="icon-sm"
               className="rounded-full cursor-pointer"
+              disabled={isScreenshotting}
+              onClick={onScreenshot}
             >
-              <CameraIcon className="size-4.5" />
+              {isScreenshotting ? (
+                <Spinner />
+              ) : (
+                <CameraIcon className="size-4.5" />
+              )}
             </Button>
             <Button
               variant="default"
               size="sm"
               className="rounded-full cursor-pointer"
+              onClick={handleUpdate}
             >
-              <Save className="size-4" />
-              Save
+              {updateProject.isPending ? (
+                <Spinner />
+              ) : (
+                <>
+                  <Save className="size-4" />
+                  Save
+                </>
+              )}
             </Button>
           </div>
         </div>
