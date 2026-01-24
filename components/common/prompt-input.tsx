@@ -31,12 +31,15 @@ const AIPromptInput = ({
     <div className="bg-background">
       <InputGroup
         className={cn(
-          "min-h-[172px] rounded-3xl bg-background ",
+          "min-h-43 max-h-43 rounded-2xl bg-background",
           className && className,
         )}
       >
         <InputGroupTextarea
-          className="text-base! py-2.5!"
+          className={cn(
+            "text-base! py-2.5! max-h-43 overflow-y-auto",
+            "[&::-webkit-scrollbar]:w-0.75",
+          )}
           placeholder="I want to design an app that..."
           value={promptText}
           onChange={(e) => {
