@@ -1,21 +1,24 @@
 import { generateProjectName } from "@/app/action/action";
 import { inngest } from "@/inngest/client";
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
     const { prompt } = await request.json();
-    const session = await getKindeServerSession();
-    const user = await session?.getUser();
 
-    if (!user) throw new Error("Unauthorized");
+    const session = await auth();
+    const user = session?.user;
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     if (!prompt || typeof prompt !== "string")
       throw new Error("Invalid prompt");
 
-    const userId = user.id;
+    const userId = session.user.id;
 
     const projectName = await generateProjectName(prompt);
 
@@ -57,13 +60,14 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
-    const session = await getKindeServerSession();
-    const user = await session?.getUser();
+    const session = await auth();
 
-    if (!user) throw new Error("Unauthorized");
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const project = await prisma.project.findMany({
-      where: { userId: user.id },
+      where: { userId: session.user.id },
       take: 10,
       orderBy: { updatedAt: "desc" },
     });

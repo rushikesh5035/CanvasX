@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/common/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/context/query-provider";
 import { metadata as siteMetadata, jsonLd } from "@/config/meta";
+import { SessionProvider } from "next-auth/react";
 
 const jostSans = Jost({
   variable: "--font-geist-sans",
@@ -26,17 +27,19 @@ export default function RootLayout({
         />
       </head>
       <body className={`${jostSans.className} antialiased`}>
-        <QueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster richColors position="bottom-center" />
-          </ThemeProvider>
-        </QueryProvider>
+        <SessionProvider>
+          <QueryProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster richColors position="bottom-center" />
+            </ThemeProvider>
+          </QueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );

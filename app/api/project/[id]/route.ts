@@ -1,6 +1,6 @@
 import { inngest } from "@/inngest/client";
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -9,14 +9,15 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const session = await getKindeServerSession();
-    const user = await session?.getUser();
+    const session = await auth();
 
-    if (!user) throw new Error("Unauthorized");
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const project = await prisma.project.findFirst({
       where: {
-        userId: user.id,
+        userId: session.user.id,
         id: id,
       },
       include: {
@@ -45,14 +46,18 @@ export async function POST(
   try {
     const { id } = await params;
     const { prompt } = await request.json();
-    const session = await getKindeServerSession();
-    const user = await session?.getUser();
 
-    if (!user) throw new Error("Unauthorized");
+    const session = await auth();
+    const user = session?.user;
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     if (!prompt || typeof prompt !== "string")
       throw new Error("Invalid prompt");
 
-    const userId = user.id;
+    const userId = session.user.id;
     const project = await prisma.project.findFirst({
       where: {
         userId,
@@ -70,7 +75,7 @@ export async function POST(
       await inngest.send({
         name: "ui/generate.screen",
         data: {
-          userId: user.id,
+          userId: session.user.id,
           projectId: project?.id,
           prompt,
           frames: project?.frames,
@@ -103,13 +108,15 @@ export async function PATCH(
   try {
     const { id } = await params;
     const { themeId } = await request.json();
-    const session = await getKindeServerSession();
-    const user = await session?.getUser();
+    const session = await auth();
 
-    if (!user) throw new Error("Unauthorized");
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     if (!themeId) throw new Error("Invalid themeId");
 
-    const userId = user.id;
+    const userId = session.user.id;
     const project = await prisma.project.update({
       where: {
         id,
@@ -141,12 +148,13 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const session = await getKindeServerSession();
-    const user = await session?.getUser();
+    const session = await auth();
 
-    if (!user) throw new Error("Unauthorized");
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    const userId = user.id;
+    const userId = session.user.id;
 
     // First delete all frames associated with the project
     await prisma.frame.deleteMany({

@@ -6,16 +6,15 @@ import { Suggestion, Suggestions } from "../ai-elements/suggestion";
 import { promptSuggestions } from "@/data/prompts";
 import Header from "./header";
 import { useCreateProject, useGetProjects } from "@/features/use-project";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { Spinner } from "../ui/spinner";
 import { ProjectType } from "@/types/project";
 import ProjectCard from "./projectCard";
+import { useCurrentUser } from "@/lib/session";
 
 const HeroSection = () => {
   const [promptText, setPromptText] = useState<string>("");
 
-  const { user } = useKindeBrowserClient();
-
+  const { user } = useCurrentUser();
   const userId = user?.id;
 
   const { data: projects, isLoading, isError } = useGetProjects(userId);

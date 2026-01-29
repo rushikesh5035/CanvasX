@@ -1,11 +1,10 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import Logo from "./logo";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { LogOutIcon, MoonIcon, SunIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { LogOutIcon } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,12 +14,18 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import ThemeSwitcher from "./theme-switcher";
+import { useCurrentUser } from "@/lib/session";
+import { signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
-  const { user } = useKindeBrowserClient();
+  const router = useRouter();
+  const { user, isAuthenticated } = useCurrentUser();
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
 
   return (
     <div className="sticky top-0 right-0 left-0 z-30">
@@ -46,35 +51,30 @@ const Header = () => {
            justify-end gap-3"
           >
             <ThemeSwitcher />
-            {user ? (
+            {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar className="h-9 w-9 shrink-0 rounded-full hover:cursor-pointer">
                     <AvatarImage
-                      src={user?.picture || ""}
-                      alt={user?.given_name || ""}
+                      src={user?.image || ""}
+                      alt={user?.name || ""}
                     />
                     <AvatarFallback className="rounded-lg">
-                      {user?.given_name?.charAt(0)}
-                      {user?.family_name?.charAt(0)}
+                      {user?.name?.charAt(0)?.toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <LogoutLink className="w-full flex items-center">
-                      <LogOutIcon className="size-4" />
-                      Logout
-                    </LogoutLink>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOutIcon className="size-4 mr-2" />
+                    Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <LoginLink>
-                <Button>Sign in</Button>
-              </LoginLink>
+              <Button onClick={() => router.push("/signin")}>Sign in</Button>
             )}
           </div>
         </div>
