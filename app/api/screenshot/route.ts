@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 let cachedExecutablePath: string | null = null;
@@ -35,8 +35,8 @@ export async function POST(request: Request) {
   try {
     const { html, width = 800, height = 600, projectId } = await request.json();
 
-    const session = await getKindeServerSession();
-    const user = await session?.getUser();
+    const session = await auth();
+    const user = session?.user;
 
     if (!user) throw new Error("Unauthorized");
 
