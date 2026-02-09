@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import {
+  getCachedProjectDetail,
+  invalidateProjectCache,
+  setCachedProjectDetail,
+} from "@/lib/redis";
 
 export async function GET(
   request: NextRequest,
@@ -16,6 +21,13 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Try cache first
+    const cached = await getCachedProjectDetail(id);
+    if (cached) {
+      return NextResponse.json(cached);
+    }
+
+    // Cache miss - fetch from database
     const project = await prisma.project.findFirst({
       where: {
         userId: session.user.id,
@@ -29,6 +41,9 @@ export async function GET(
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
+
+    // Cache the result
+    await setCachedProjectDetail(id, project);
 
     return NextResponse.json(project);
   } catch (error) {
@@ -70,6 +85,9 @@ export async function POST(
     });
 
     if (!project) throw new Error("Project not found");
+
+    // Invalidate caches since generation will modify the project
+    await invalidateProjectCache(userId, id);
 
     // Trigger the inngest function to create project
     try {
@@ -128,6 +146,9 @@ export async function PATCH(
       },
     });
 
+    // Invalidate caches
+    await invalidateProjectCache(userId, id);
+
     return NextResponse.json({
       success: true,
       data: project,
@@ -171,6 +192,9 @@ export async function DELETE(
         userId,
       },
     });
+
+    // Invalidate caches
+    await invalidateProjectCache(userId, id);
 
     return NextResponse.json({
       success: true,

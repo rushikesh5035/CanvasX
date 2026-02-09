@@ -237,6 +237,10 @@ Generate the complete, production-ready, pixel-perfect HTML for this screen now.
           projectId: projectId,
         },
       });
+
+      // Invalidate caches since project now has new frames
+      const { invalidateProjectCache } = await import("@/lib/redis");
+      await invalidateProjectCache(userId, projectId);
     } catch (error) {
       console.error("Error in generateScreen function:", error);
 

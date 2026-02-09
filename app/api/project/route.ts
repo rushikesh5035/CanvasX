@@ -4,6 +4,11 @@ import { generateProjectName } from "@/app/action/action";
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import {
+  getCachedProjectList,
+  invalidateProjectCache,
+  setCachedProjectList,
+} from "@/lib/redis";
 
 export async function POST(request: Request) {
   try {
@@ -42,6 +47,9 @@ export async function POST(request: Request) {
         name: projectName,
       },
     });
+
+    // Invalidate project list cache
+    await invalidateProjectCache(userId);
 
     // Trigger the inngest function to create project
     try {
@@ -93,15 +101,30 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Try cache first
+    const cached = await getCachedProjectList(session.user.id);
+    if (cached) {
+      return NextResponse.json({
+        success: true,
+        data: cached,
+        cached: true,
+      });
+    }
+
+    // Cache miss - fetch from database
     const project = await prisma.project.findMany({
       where: { userId: session.user.id },
       take: 10,
       orderBy: { updatedAt: "desc" },
     });
 
+    // Cache the result
+    await setCachedProjectList(session.user.id, project);
+
     return NextResponse.json({
       success: true,
       data: project,
+      cached: false,
     });
   } catch (error) {
     console.error("Error fetching projects:", error);
