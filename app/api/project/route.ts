@@ -4,6 +4,7 @@ import { generateProjectName } from "@/app/action/action";
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit, projectCreationLimiter } from "@/lib/rate-limit";
 import {
   getCachedProjectList,
   invalidateProjectCache,
@@ -19,6 +20,26 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Check rate limit
+    const limit = await checkRateLimit(user.id, projectCreationLimiter);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        {
+          error: "Too many projects created. Please try again later.",
+          retryAfter: limit.retryAfter,
+        },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.limit.toString(),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": limit.resetAt.getTime().toString(),
+            "Retry-After": limit.retryAfter.toString(),
+          },
+        }
+      );
     }
 
     if (!prompt || typeof prompt !== "string")

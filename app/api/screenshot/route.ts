@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit, screenshotLimiter } from "@/lib/rate-limit";
 
 let cachedExecutablePath: string | null = null;
 let downloadPromise: Promise<string> | null = null;
@@ -40,6 +41,26 @@ export async function POST(request: Request) {
     const user = session?.user;
 
     if (!user) throw new Error("Unauthorized");
+
+    // Check rate limit (screenshots are resource-intensive)
+    const limit = await checkRateLimit(user.id, screenshotLimiter);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        {
+          error: "Too many screenshot requests. Please try again later.",
+          retryAfter: limit.retryAfter,
+        },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.limit.toString(),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": limit.resetAt.getTime().toString(),
+            "Retry-After": limit.retryAfter.toString(),
+          },
+        }
+      );
+    }
 
     const userId = user.id;
 

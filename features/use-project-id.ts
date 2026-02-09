@@ -2,6 +2,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 
+import { getErrorMessage, rateLimitHandlers } from "@/lib/handle-rate-limit";
+
 export const useGetProjectById = (projectId: string) => {
   return useQuery({
     queryKey: ["project", projectId],
@@ -23,9 +25,11 @@ export const useGenerateProjectById = (projectId: string) => {
     onSuccess: () => {
       toast.success("Generation Started");
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       console.log("Error generating screen:", error);
-      toast.error("Failed to generate screen.");
+      if (!rateLimitHandlers.screenGeneration(error)) {
+        toast.error(getErrorMessage(error, "Failed to generate screen."));
+      }
     },
   });
 };

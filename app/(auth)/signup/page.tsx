@@ -8,6 +8,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+interface RateLimitError {
+  error: string;
+  retryAfter?: number;
+}
+
+function getRateLimitMessage(data: RateLimitError): string {
+  const retryAfter = data?.retryAfter;
+  const minutes = retryAfter ? Math.ceil(retryAfter / 60) : 60;
+  return `Too many registration attempts. You can register 3 accounts per hour. Please try again in ${minutes} minutes.`;
+}
+
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +41,12 @@ export default function SignUpPage() {
 
       const data = await res.json();
       if (!res.ok || !data?.success) {
-        setError(data?.error || "Registration failed");
+        // Check for rate limit error
+        if (res.status === 429) {
+          setError(getRateLimitMessage(data));
+        } else {
+          setError(data?.error || "Registration failed");
+        }
         return;
       }
 

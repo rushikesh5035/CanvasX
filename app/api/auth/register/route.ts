@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import z from "zod";
 
 import prisma from "@/lib/prisma";
+import { checkRateLimit, registrationLimiter } from "@/lib/rate-limit";
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -17,6 +18,26 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const { email, password, name } = registerSchema.parse(body);
+
+    // Check rate limit by email to prevent spam registrations
+    const limit = await checkRateLimit(email, registrationLimiter);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        {
+          error: "Too many registration attempts. Please try again later.",
+          retryAfter: limit.retryAfter,
+        },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.limit.toString(),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": limit.resetAt.getTime().toString(),
+            "Retry-After": limit.retryAfter.toString(),
+          },
+        }
+      );
+    }
 
     if (!email || !password) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });

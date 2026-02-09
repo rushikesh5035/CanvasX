@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit, screenGenerationLimiter } from "@/lib/rate-limit";
 import {
   getCachedProjectDetail,
   invalidateProjectCache,
@@ -68,6 +69,29 @@ export async function POST(
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Check rate limit
+    const limit = await checkRateLimit(
+      session.user.id,
+      screenGenerationLimiter
+    );
+    if (!limit.allowed) {
+      return NextResponse.json(
+        {
+          error: "Too many generation requests. Please try again later.",
+          retryAfter: limit.retryAfter,
+        },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.limit.toString(),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": limit.resetAt.getTime().toString(),
+            "Retry-After": limit.retryAfter.toString(),
+          },
+        }
+      );
     }
 
     if (!prompt || typeof prompt !== "string")
@@ -174,6 +198,28 @@ export async function DELETE(
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Check rate limit
+    const { checkRateLimit, projectDeletionLimiter } =
+      await import("@/lib/rate-limit");
+    const limit = await checkRateLimit(session.user.id, projectDeletionLimiter);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        {
+          error: "Too many deletion requests. Please slow down.",
+          retryAfter: limit.retryAfter,
+        },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.limit.toString(),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": limit.resetAt.getTime().toString(),
+            "Retry-After": limit.retryAfter.toString(),
+          },
+        }
+      );
     }
 
     const userId = session.user.id;

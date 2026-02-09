@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { TOOL_MODE_ENUM, ToolModeType } from "@/constant/canvas";
 import { useCanvas } from "@/context/canvas-context";
+import { getErrorMessage, rateLimitHandlers } from "@/lib/handle-rate-limit";
 import { cn } from "@/lib/utils";
 
 import CanvasControls from "./canvas-control";
@@ -67,8 +68,10 @@ const Canvas = ({
         //   console.log("Thumbnail saved", response.data);
         // }
         toast.success("Screenshot downloaded");
-      } catch (error) {
-        toast.error("Failed to save Thumbnail");
+      } catch (error: unknown) {
+        if (!rateLimitHandlers.screenshot(error)) {
+          toast.error(getErrorMessage(error, "Failed to save Thumbnail"));
+        }
       } finally {
         setIsSaving(false);
       }
@@ -153,8 +156,10 @@ const Canvas = ({
 
       window.URL.revokeObjectURL(url);
       toast.success("Screenshot downloaded");
-    } catch (error) {
-      toast.error("Failed to screenshot");
+    } catch (error: unknown) {
+      if (!rateLimitHandlers.screenshot(error)) {
+        toast.error(getErrorMessage(error, "Failed to screenshot"));
+      }
     } finally {
       setIsScreenshotting(false);
     }

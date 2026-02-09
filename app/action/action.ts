@@ -2,7 +2,7 @@
 
 import { generateText } from "ai";
 
-import { google } from "@/lib/openrouter";
+import { google } from "@/lib/gemini";
 
 export async function generateProjectName(prompt: string) {
   try {

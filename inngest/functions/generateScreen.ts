@@ -2,7 +2,7 @@ import { generateText, Output, stepCountIs } from "ai";
 
 import { AnalysisSchema } from "@/config/analysis-schema";
 import { validateGeminiApiKey } from "@/lib/env-check";
-import { google } from "@/lib/openrouter";
+import { google } from "@/lib/gemini";
 import prisma from "@/lib/prisma";
 import { ANALYSIS_PROMPT, GENERATION_SYSTEM_PROMPT } from "@/lib/prompts";
 import { BASE_VARIABLES, THEME_LIST } from "@/lib/themes";

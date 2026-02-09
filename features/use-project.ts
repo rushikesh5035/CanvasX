@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 
+import { getErrorMessage, rateLimitHandlers } from "@/lib/handle-rate-limit";
+
 export const useCreateProject = () => {
   const router = useRouter();
   return useMutation({
@@ -12,8 +14,10 @@ export const useCreateProject = () => {
     onSuccess: (data) => {
       router.push(`/project/${data.data.id}`);
     },
-    onError: () => {
-      toast.error("Failed to create project.");
+    onError: (error: unknown) => {
+      if (!rateLimitHandlers.projectCreation(error)) {
+        toast.error(getErrorMessage(error, "Failed to create project."));
+      }
     },
   });
 };
@@ -38,8 +42,10 @@ export const useDeleteProject = () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success("Project deleted successfully");
     },
-    onError: () => {
-      toast.error("Failed to delete project");
+    onError: (error: unknown) => {
+      if (!rateLimitHandlers.projectDeletion(error)) {
+        toast.error(getErrorMessage(error, "Failed to delete project"));
+      }
     },
   });
 };
