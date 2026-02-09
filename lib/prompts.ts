@@ -116,7 +116,7 @@ Generate stunning, ready-to-use mobile HTML. Start with <div, end at last tag. N
 `;
 
 const THEME_OPTIONS_STRING = THEME_LIST.map(
-  (t) => `- ${t.id} (${t.name})`,
+  (t) => `- ${t.id} (${t.name})`
 ).join("\n");
 
 export const ANALYSIS_PROMPT = `

@@ -1,7 +1,10 @@
-import { MoonIcon, SunIcon } from "lucide-react";
-import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
+
+import { MoonIcon, SunIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+import { Button } from "../ui/button";
 
 const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
@@ -12,19 +15,19 @@ const ThemeSwitcher = () => {
       <Button
         variant="outline"
         size="icon"
-        className="relative rounded-md h-9 w-9 hover:cursor-pointer"
+        className="relative h-9 w-9 rounded-md hover:cursor-pointer"
         onClick={() => setTheme(isDark ? "light" : "dark")}
       >
         <SunIcon
           className={cn(
             "absolute h-5 w-5 transition",
-            isDark ? "scale-100" : "scale-0",
+            isDark ? "scale-100" : "scale-0"
           )}
         />
         <MoonIcon
           className={cn(
             "absolute h-5 w-5 transition",
-            isDark ? "scale-0" : "scale-100",
+            isDark ? "scale-0" : "scale-100"
           )}
         />
       </Button>

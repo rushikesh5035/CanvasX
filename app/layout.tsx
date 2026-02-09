@@ -1,10 +1,12 @@
+import { SessionProvider } from "next-auth/react";
 import { Jost } from "next/font/google";
-import "./globals.css";
+
 import { ThemeProvider } from "@/components/common/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { jsonLd, metadata as siteMetadata } from "@/config/meta";
 import { QueryProvider } from "@/context/query-provider";
-import { metadata as siteMetadata, jsonLd } from "@/config/meta";
-import { SessionProvider } from "next-auth/react";
+
+import "./globals.css";
 
 const jostSans = Jost({
   variable: "--font-geist-sans",

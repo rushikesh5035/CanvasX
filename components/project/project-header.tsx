@@ -1,25 +1,24 @@
 import { useRouter } from "next/navigation";
-import Logo from "../common/logo";
-import { Button } from "../ui/button";
+
 import { ArrowLeftIcon } from "lucide-react";
+
+import Logo from "../common/logo";
 import ThemeSwitcher from "../common/theme-switcher";
+import { Button } from "../ui/button";
 
 const ProjectHeader = ({ projectName }: { projectName?: string }) => {
   const router = useRouter();
 
   return (
     <div className="sticky top-0">
-      <header
-        className="border-b border-border/40
-    bg-card/50 backdrop-blur-sm"
-      >
+      <header className="border-border/40 bg-card/50 border-b backdrop-blur-sm">
         <div className="flex items-center justify-between px-4 py-2">
           <div className="flex items-center gap-4">
             <Logo />
             <Button
               size="icon-sm"
               variant="ghost"
-              className="rounded-full bg-muted! hover:cursor-pointer"
+              className="bg-muted! rounded-full hover:cursor-pointer"
               onClick={() => router.push("/")}
             >
               <ArrowLeftIcon className="size-4" />

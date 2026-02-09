@@ -1,8 +1,9 @@
+import { NextResponse } from "next/server";
+
 import { generateProjectName } from "@/app/action/action";
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
@@ -19,6 +20,19 @@ export async function POST(request: Request) {
       throw new Error("Invalid prompt");
 
     const userId = session.user.id;
+
+    // Verify user exists in database
+    const dbUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!dbUser) {
+      console.error("User not found in database:", userId);
+      return NextResponse.json(
+        { error: "User not found. Please sign in again." },
+        { status: 404 }
+      );
+    }
 
     const projectName = await generateProjectName(prompt);
 
@@ -48,17 +62,30 @@ export async function POST(request: Request) {
       data: project,
     });
   } catch (error) {
-    console.log("Error occured", error);
+    console.error("Error creating project:", error);
+
+    // Handle specific Prisma errors
+    if (error instanceof Error && "code" in error) {
+      const prismaError = error as { code: string };
+      if (prismaError.code === "P2003") {
+        return NextResponse.json(
+          { error: "Invalid user reference. Please sign in again." },
+          { status: 400 }
+        );
+      }
+    }
+
     return NextResponse.json(
       {
-        error: "Failed to create project",
+        error:
+          error instanceof Error ? error.message : "Failed to create project",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const session = await auth();
 
@@ -77,12 +104,13 @@ export async function GET(request: Request) {
       data: project,
     });
   } catch (error) {
-    console.log("Error occured", error);
+    console.error("Error fetching projects:", error);
     return NextResponse.json(
       {
-        error: "Failed to fetch projects",
+        error:
+          error instanceof Error ? error.message : "Failed to fetch projects",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

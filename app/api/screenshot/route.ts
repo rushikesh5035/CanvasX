@@ -1,6 +1,7 @@
-import prisma from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
 let cachedExecutablePath: string | null = null;
 let downloadPromise: Promise<string> | null = null;
@@ -12,7 +13,7 @@ async function getChromiumPath(): Promise<string> {
     const chromium = (await import("@sparticuz/chromium-min")).default;
     downloadPromise = chromium
       .executablePath(
-        "https://github.com/gabenunez/puppeteer-on-vercel/raw/refs/heads/main/example/chromium-dont-use-in-prod.tar",
+        "https://github.com/gabenunez/puppeteer-on-vercel/raw/refs/heads/main/example/chromium-dont-use-in-prod.tar"
       )
       .then((path) => {
         cachedExecutablePath = path;
@@ -121,7 +122,7 @@ export async function POST(request: Request) {
     console.error("Error generating screenshot:", error);
     return NextResponse.json(
       { error: "Failed to generate screenshot" },
-      { status: 500 },
+      { status: 500 }
     );
   } finally {
     if (browser) {

@@ -1,19 +1,17 @@
 "use client";
 
+import { useParams } from "next/navigation";
+
 import Canvas from "@/components/canvas";
 import ProjectHeader from "@/components/project/project-header";
 import { CanvasProvider } from "@/context/canvas-context";
 import { useGetProjectById } from "@/features/use-project-id";
-import { useParams } from "next/navigation";
 
 const Page = () => {
   const params = useParams();
   const id = params.id as string;
 
   const { data: project, isPending } = useGetProjectById(id);
-
-  // const frames = project?.frames || [];
-  // const themeId = project?.theme || "";
 
   const hasInitialData = project?.frames.length > 0;
 
@@ -22,7 +20,7 @@ const Page = () => {
   }
 
   return (
-    <div className="relative h-screen w-full flex flex-col">
+    <div className="relative flex h-screen w-full flex-col">
       <ProjectHeader projectName={project?.name} />
 
       <CanvasProvider

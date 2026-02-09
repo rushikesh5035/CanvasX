@@ -1,18 +1,21 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { useState } from "react";
+
 import {
+  ChevronLeft,
+  ChevronRight,
   CodeIcon,
   DownloadIcon,
   GripVertical,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
-import { Separator } from "../ui/separator";
+
+import { cn } from "@/lib/utils";
+
 import { Button } from "../ui/button";
-import { Spinner } from "../ui/spinner";
-import { useState } from "react";
 import { ButtonGroup } from "../ui/button-group";
+import { Separator } from "../ui/separator";
+import { Spinner } from "../ui/spinner";
 import {
   Tooltip,
   TooltipContent,
@@ -60,10 +63,10 @@ const DeviceFramToolbar = ({
   return (
     <div
       className={cn(
-        `absolute -mt-2 flex items-center justify-between gap-2 rounded-full z-50`,
+        `absolute z-50 -mt-2 flex items-center justify-between gap-2 rounded-full`,
         isSelected
-          ? `left-1/2 -translate-x-1/2 border bg-card dark:bg-muted pl-2 py-1 shadown-sm min-w-65 h-8.75`
-          : "w-[150px h-auto] left-10 ",
+          ? `bg-card dark:bg-muted shadown-sm left-1/2 h-8.75 min-w-65 -translate-x-1/2 border py-1 pl-2`
+          : "w-[150px h-auto] left-10"
       )}
       style={{
         top: isSelected ? "-70px" : "-38px",
@@ -73,13 +76,13 @@ const DeviceFramToolbar = ({
     >
       <div
         role="button"
-        className="flex flex-1 cursor-grab items-center justify-start gap-1.5 active:cursor-grabbing h-full"
+        className="flex h-full flex-1 cursor-grab items-center justify-start gap-1.5 active:cursor-grabbing"
       >
-        <GripVertical className="size-4 text-muted-foreground" />
+        <GripVertical className="text-muted-foreground size-4" />
         <div
           className={cn(
-            `min-w-20 font-medium text-sm mx-px truncate mt-0.5`,
-            isSelected && "w-[100px]",
+            `mx-px mt-0.5 min-w-20 truncate text-sm font-medium`,
+            isSelected && "w-[100px]"
           )}
         >
           {title}
@@ -88,8 +91,8 @@ const DeviceFramToolbar = ({
 
       {isSelected && (
         <>
-          <Separator orientation="vertical" className="h-5 bg-border" />
-          <ButtonGroup className="gap-px justify-end">
+          <Separator orientation="vertical" className="bg-border h-5" />
+          <ButtonGroup className="justify-end gap-px">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -97,10 +100,10 @@ const DeviceFramToolbar = ({
                     disabled={disabled}
                     size="sm"
                     variant="ghost"
-                    className="rounded-full dark:hover:bg-white/20 hover:bg-muted cursor-pointer"
+                    className="hover:bg-muted cursor-pointer rounded-full dark:hover:bg-white/20"
                     onClick={onOpenHtmlDialog}
                   >
-                    <CodeIcon className="size-3.5! stroke-1.5! mt-px" />
+                    <CodeIcon className="stroke-1.5! mt-px size-3.5!" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>View HTML</TooltipContent>
@@ -113,14 +116,14 @@ const DeviceFramToolbar = ({
                   <Button
                     disabled={disabled || isDownloading}
                     size="icon-sm"
-                    className="rounded-full dark:hover:bg-white/20 hover:bg-muted cursor-pointer"
+                    className="hover:bg-muted cursor-pointer rounded-full dark:hover:bg-white/20"
                     variant="ghost"
                     onClick={onDownloadPng}
                   >
                     {isDownloading ? (
                       <Spinner />
                     ) : (
-                      <DownloadIcon className="size-3.5! stroke-1.5!" />
+                      <DownloadIcon className="stroke-1.5! size-3.5!" />
                     )}
                   </Button>
                 </TooltipTrigger>

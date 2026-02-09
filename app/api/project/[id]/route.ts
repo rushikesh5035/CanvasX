@@ -1,11 +1,12 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
@@ -34,14 +35,14 @@ export async function GET(
     console.log(error);
     return NextResponse.json(
       { error: "Failed to fetch project" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
@@ -91,19 +92,19 @@ export async function POST(
       data: project,
     });
   } catch (error) {
-    console.log("Error occured", error);
+    console.log("Error occurred", error);
     return NextResponse.json(
       {
         error: "Failed to generate project",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
@@ -132,19 +133,19 @@ export async function PATCH(
       data: project,
     });
   } catch (error) {
-    console.log("Error occured", error);
+    console.log("Error occurred", error);
     return NextResponse.json(
       {
         error: "Failed to update project",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
@@ -181,7 +182,7 @@ export async function DELETE(
       {
         error: "Failed to delete project",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

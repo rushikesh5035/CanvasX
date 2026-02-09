@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     creator: siteConfig.creator,
   },
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
   ),
   robots: {
     index: true,

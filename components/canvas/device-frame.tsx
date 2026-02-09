@@ -1,14 +1,17 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Rnd } from "react-rnd";
+
+import axios from "axios";
+import { toast } from "sonner";
+
 import { TOOL_MODE_ENUM, ToolModeType } from "@/constant/canvas";
 import { useCanvas } from "@/context/canvas-context";
 import { getHTMLWrapper } from "@/lib/frame-wrapper";
 import { cn } from "@/lib/utils";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Rnd } from "react-rnd";
+
 import DeviceFramToolbar from "./device-fram-toolbar";
-import axios from "axios";
-import { toast } from "sonner";
 import DeviceFrameSkeleton from "./device-frame-skeleton";
 
 type PropsType = {
@@ -80,7 +83,7 @@ const DeviceFrame = ({
         {
           responseType: "blob",
           validateStatus: (s) => (s >= 200 && s < 300) || s === 304,
-        },
+        }
       );
 
       const url = window.URL.createObjectURL(response.data);
@@ -147,10 +150,10 @@ const DeviceFrame = ({
           "ring-3 ring-blue-400 ring-offset-1",
         toolMode === TOOL_MODE_ENUM.HAND
           ? "cursor-grab! active:cursor-grabbing!"
-          : "cursor-move",
+          : "cursor-move"
       )}
     >
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <DeviceFramToolbar
           title={title}
           isSelected={isSelected && toolMode !== TOOL_MODE_ENUM.HAND}
@@ -162,8 +165,8 @@ const DeviceFrame = ({
 
         <div
           className={cn(
-            `relative w-full h-auto shadow-sm rounded-[36px] overflow-hidden`,
-            isSelected && toolMode !== TOOL_MODE_ENUM.HAND && "rounded-none",
+            `relative h-auto w-full overflow-hidden rounded-[36px] shadow-sm`,
+            isSelected && toolMode !== TOOL_MODE_ENUM.HAND && "rounded-none"
           )}
         >
           {isLoading ? (
@@ -200,5 +203,5 @@ const DeviceFrame = ({
 export default DeviceFrame;
 
 const Handle = () => (
-  <div className="z-30 h-4 w-4 bg-white border-2 border-blue-500" />
+  <div className="z-30 h-4 w-4 border-2 border-blue-500 bg-white" />
 );

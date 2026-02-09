@@ -1,23 +1,27 @@
 "use client";
 
-import { fetchRealtimeSubscriptionToken } from "@/app/action/realtime";
-import { THEME_LIST, ThemeType } from "@/lib/themes";
-import { FrameType } from "@/types/project";
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
+
 import { useInngestSubscription } from "@inngest/realtime/hooks";
+
+import { fetchRealtimeSubscriptionToken } from "@/app/action/realtime";
+import { THEME_LIST, ThemeType } from "@/lib/themes";
+import { FrameType } from "@/types/project";
 
 export type LoadingStatusType =
   | "idle"
   | "running"
   | "analyzing"
   | "generating"
-  | "completed";
+  | "completed"
+  | "failed";
 
 export interface CanvasContextType {
   theme?: ThemeType;
@@ -34,6 +38,14 @@ export interface CanvasContextType {
   setSelectedFrameId: (id: string | null) => void;
 
   loadingStatus: LoadingStatusType;
+  errorMessage: string | undefined;
+  retryGeneration?: () => void;
+}
+
+export interface ScreenData {
+  id: string;
+  name: string;
+  purpose?: string;
 }
 
 const CanvasContext = createContext<CanvasContextType | undefined>(undefined);
@@ -52,7 +64,7 @@ export const CanvasProvider = ({
   projectId: string | null;
 }) => {
   const [themeId, setThemeId] = useState<string>(
-    initialThemeId || THEME_LIST[0].id,
+    initialThemeId || THEME_LIST[0].id
   );
 
   const [frames, setFrames] = useState<FrameType[]>(initialFrames || []);
@@ -60,16 +72,33 @@ export const CanvasProvider = ({
   const [selectedFrameId, setSelectedFrameId] = useState<string | null>(null);
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>(
-    hasInitialData ? "idle" : "running",
+    hasInitialData ? "idle" : "running"
   );
 
-  const [prevProjectId, setPrevProjectId] = useState(projectId);
-  if (projectId !== prevProjectId) {
-    setPrevProjectId(projectId);
-    setFrames(initialFrames);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+
+  const statusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Only update if projectId actually changed
+    if (projectId === null) return;
+
+    // Clear any existing timeout
+    if (statusTimeoutRef.current) {
+      clearTimeout(statusTimeoutRef.current);
+      statusTimeoutRef.current = null;
+    }
+
+    setFrames(initialFrames || []);
     setThemeId(initialThemeId || THEME_LIST[0].id);
     setSelectedFrameId(null);
-  }
+    // Reset loading state when switching projects
+    setLoadingStatus(
+      initialFrames && initialFrames.length > 0 ? "idle" : "running"
+    );
+    setErrorMessage(undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
 
   const theme = THEME_LIST.find((theme) => theme.id === themeId);
 
@@ -78,7 +107,6 @@ export const CanvasProvider = ({
       ? frames.find((f) => f.id === selectedFrameId) || null
       : null;
 
-  // update the loading state inngest realtime event
   const { freshData } = useInngestSubscription({
     refreshToken: fetchRealtimeSubscriptionToken,
   });
@@ -94,20 +122,33 @@ export const CanvasProvider = ({
       switch (topic) {
         case "generation.start":
           setLoadingStatus("running");
+          setErrorMessage(undefined);
+
+          if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+          statusTimeoutRef.current = setTimeout(() => {
+            setLoadingStatus("failed");
+            setErrorMessage("Generation timed out. Please try again.");
+            setFrames((prev) => prev.filter((f) => !f.isLoading));
+          }, 300000); // 5 minutes timeout
           break;
+
         case "analysis.start":
           setLoadingStatus("analyzing");
+          break;
+
         case "analysis.complete":
           setLoadingStatus("generating");
           if (data.theme) setThemeId(data.theme);
 
           if (data.screens && data.screens.length > 0) {
-            const skeletonFrames: FrameType[] = data.screens.map((s: any) => ({
-              id: s.id,
-              title: s.name,
-              htmlContent: "",
-              isLoading: true,
-            }));
+            const skeletonFrames: FrameType[] = data.screens.map(
+              (s: ScreenData) => ({
+                id: s.id,
+                title: s.name,
+                htmlContent: "",
+                isLoading: true,
+              })
+            );
             setFrames((prev) => [...prev, ...skeletonFrames]);
           }
           break;
@@ -125,17 +166,57 @@ export const CanvasProvider = ({
           break;
 
         case "generation.complete":
+          if (statusTimeoutRef.current) {
+            clearTimeout(statusTimeoutRef.current);
+            statusTimeoutRef.current = null;
+          }
           setLoadingStatus("completed");
+          setErrorMessage(undefined);
+
           setTimeout(() => {
             setLoadingStatus("idle");
           }, 1000);
-
           break;
+
+        case "generation.failed":
+          if (statusTimeoutRef.current) {
+            clearTimeout(statusTimeoutRef.current);
+            statusTimeoutRef.current = null;
+          }
+          setLoadingStatus("failed");
+          setErrorMessage(data.error || "Generation failed. Please try again.");
+          setFrames((prev) => prev.filter((f) => !f.isLoading));
+          break;
+
         default:
           break;
       }
     });
   }, [projectId, freshData]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (statusTimeoutRef.current) {
+        clearTimeout(statusTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (hasInitialData && frames && frames.length > 0) {
+      const clearTimer = setTimeout(() => {
+        setLoadingStatus((current) => {
+          if (current === "running" || current === "analyzing") {
+            return "idle";
+          }
+          return current;
+        });
+      }, 3000);
+
+      return () => clearTimeout(clearTimer);
+    }
+  }, [hasInitialData, frames]);
 
   const addFrame = useCallback((frame: FrameType) => {
     setFrames((prev) => [...prev, frame]);
@@ -144,9 +225,20 @@ export const CanvasProvider = ({
   const updateFrame = useCallback((id: string, data: Partial<FrameType>) => {
     setFrames((prev) => {
       return prev.map((frame) =>
-        frame.id === id ? { ...frame, ...data } : frame,
+        frame.id === id ? { ...frame, ...data } : frame
       );
     });
+  }, []);
+
+  const retryGeneration = useCallback(() => {
+    // Clear error state
+    setLoadingStatus("idle");
+    setErrorMessage(undefined);
+
+    // Redirect to home page to start a new generation
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   }, []);
 
   return (
@@ -163,6 +255,8 @@ export const CanvasProvider = ({
         updateFrame,
         addFrame,
         loadingStatus,
+        errorMessage,
+        retryGeneration,
       }}
     >
       {children}

@@ -1,6 +1,7 @@
+import { CheckIcon } from "lucide-react";
+
 import { parseThemeColors, ThemeType } from "@/lib/themes";
 import { cn } from "@/lib/utils";
-import { CheckIcon } from "lucide-react";
 
 const ThemeItem = ({
   theme,
@@ -17,11 +18,8 @@ const ThemeItem = ({
     <button
       onClick={onSelect}
       className={cn(
-        `flex items-center justify-between w-full
-        p-1 rounded-xl border gap-4 bg-background
-        hover:border-primary/50 hover:bg-accent/50
-        `,
-        isSelected ? "border-2" : "border",
+        `bg-background hover:border-primary/50 hover:bg-accent/50 flex w-full items-center justify-between gap-4 rounded-xl border p-1`,
+        isSelected ? "border-2" : "border"
       )}
       style={{
         borderColor: isSelected ? color.primary : "",
@@ -31,7 +29,7 @@ const ThemeItem = ({
         {["primary", "secondary", "accent", "muted"].map((key) => (
           <div
             key={key}
-            className="w-4 h-4 rounded-full border"
+            className="h-4 w-4 rounded-full border"
             style={{
               backgroundColor: color[key],
               borderColor: "#ccc",
@@ -40,7 +38,7 @@ const ThemeItem = ({
         ))}
       </div>
 
-      <div className="flex items-center gap-2 flex-[0.9]">
+      <div className="flex flex-[0.9] items-center gap-2">
         <span className="text-sm">{theme.name}</span>
         {isSelected && <CheckIcon size={16} color={color.primary} />}
       </div>

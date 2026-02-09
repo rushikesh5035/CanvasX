@@ -1,14 +1,16 @@
 "use client";
 
+import { CornerDownLeftIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
 } from "../ui/input-group";
-import { cn } from "@/lib/utils";
 import { Spinner } from "../ui/spinner";
-import { CornerDownLeftIcon } from "lucide-react";
 
 interface PropsType {
   promptText: string;
@@ -31,14 +33,14 @@ const AIPromptInput = ({
     <div className="bg-background">
       <InputGroup
         className={cn(
-          "min-h-43 max-h-43 rounded-2xl bg-background",
-          className && className,
+          "bg-background max-h-43 min-h-43 rounded-2xl",
+          className && className
         )}
       >
         <InputGroupTextarea
           className={cn(
-            "text-base! py-2.5! max-h-43 overflow-y-auto",
-            "[&::-webkit-scrollbar]:w-0.75",
+            "max-h-43 overflow-y-auto py-2.5! text-base!",
+            "[&::-webkit-scrollbar]:w-0.75"
           )}
           placeholder="I want to design an app that..."
           value={promptText}
@@ -54,7 +56,7 @@ const AIPromptInput = ({
           {!hideSubmitBtn && (
             <InputGroupButton
               variant="default"
-              className=""
+              className="hover:cursor-pointer"
               size="sm"
               disabled={!promptText?.trim() || isLoading}
               onClick={() => onSubmit?.()}

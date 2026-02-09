@@ -1,6 +1,5 @@
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
-export const openRouter = createOpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY!,
+export const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
 });
-

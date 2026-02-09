@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
+
 import { signIn } from "next-auth/react";
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import Link from "next/link";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
@@ -48,7 +50,7 @@ export default function SignUpPage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md space-y-6 p-8">
-        <h1 className="text-2xl font-bold text-center">Sign Up</h1>
+        <h1 className="text-center text-2xl font-bold">Sign Up</h1>
 
         <Button
           onClick={() => signIn("google", { callbackUrl: "/" })}
@@ -63,7 +65,7 @@ export default function SignUpPage() {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
+            <span className="bg-background text-muted-foreground px-2">
               Or continue with
             </span>
           </div>
@@ -92,17 +94,19 @@ export default function SignUpPage() {
             required
           />
           {!passwordsMatch && (
-            <div className="text-red-500 text-sm">Passwords do not match.</div>
+            <div className="text-sm text-red-500">Passwords do not match.</div>
           )}
           {error && (
-            <div className="text-red-500 text-sm" role="alert">{error}</div>
+            <div className="text-sm text-red-500" role="alert">
+              {error}
+            </div>
           )}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Signing up..." : "Sign Up"}
           </Button>
         </form>
 
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-center text-sm">
           Already have an account?{" "}
           <Link href="/signin" className="underline">
             Sign In

@@ -1,7 +1,9 @@
-import prisma from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+
+import bcrypt from "bcryptjs";
 import z from "zod";
+
+import prisma from "@/lib/prisma";
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -26,7 +28,7 @@ export async function POST(request: Request) {
     if (existingUser) {
       return NextResponse.json(
         { error: "User already exists" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -51,13 +53,13 @@ export async function POST(request: Request) {
           name: user.name,
         },
       },
-      { status: 201 },
+      { status: 201 }
     );
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
       { error: "Failed to create user" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

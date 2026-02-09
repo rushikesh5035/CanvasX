@@ -1,8 +1,9 @@
 "use client";
 
 import { getHTMLWrapper } from "@/lib/frame-wrapper";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+
 import { CodeBlock, CodeBlockCopyButton } from "../ai-elements/code-block";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 const HtmlDialog = ({
   open,
@@ -21,19 +22,19 @@ const HtmlDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full sm:max-w-7xl h-[90vh]">
+      <DialogContent className="h-[90vh] w-full sm:max-w-7xl">
         <DialogHeader>
           <DialogTitle>{title || "Untitled"}</DialogTitle>
         </DialogHeader>
-        <div className="relative w-full h-full overflow-y-auto">
+        <div className="relative h-full w-full overflow-y-auto">
           <div>
             <CodeBlock
-              className="w-full h-auto"
+              className="h-auto w-full"
               code={fullHtml}
               language="html"
               showLineNumbers
             >
-              <CodeBlockCopyButton className="fixed top-16 right-12 z-50 bg-muted!" />
+              <CodeBlockCopyButton className="bg-muted! fixed top-16 right-12 z-50" />
             </CodeBlock>
           </div>
         </div>

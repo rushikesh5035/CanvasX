@@ -1,10 +1,16 @@
 "use client";
 
-import Logo from "./logo";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { Button } from "../ui/button";
-import { LogOutIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
+import { LogOutIcon } from "lucide-react";
+import { toast } from "sonner";
+
+import { useCurrentUser } from "@/lib/session";
+
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,43 +19,44 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import Logo from "./logo";
 import ThemeSwitcher from "./theme-switcher";
-import { useCurrentUser } from "@/lib/session";
-import { signIn, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 const Header = () => {
   const router = useRouter();
   const { user, isAuthenticated } = useCurrentUser();
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
+    try {
+      await signOut({ redirect: false });
+      toast.success("Logged out successfully");
+      router.push("/");
+      router.refresh();
+    } catch {
+      toast.error("Failed to logout. Please try again.");
+    }
   };
 
   return (
     <div className="sticky top-0 right-0 left-0 z-30">
-      <header className="h-16 border-b bg-background py-4">
-        <div
-          className="w-full max-w-6xl mx-auto
-         flex items-center justify-between"
-        >
+      <header className="bg-background h-16 border-b py-4">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between">
           <Logo />
-          <div
-            className="hidden flex-1 items-center
-          justify-center gap-8 md:flex"
-          >
+          <div className="hidden flex-1 items-center justify-center gap-8 md:flex">
             <Link href="/" className="text-foreground-muted text-sm">
               Home
             </Link>
+
             <Link href="/" className="text-foreground-muted text-sm">
               Pricing
             </Link>
+            {isAuthenticated && (
+              <Link href="/projects" className="text-foreground-muted text-sm">
+                Projects
+              </Link>
+            )}
           </div>
-          <div
-            className="flex flex-1 items-center
-           justify-end gap-3"
-          >
+          <div className="flex flex-1 items-center justify-end gap-3">
             <ThemeSwitcher />
             {isAuthenticated ? (
               <DropdownMenu>
@@ -68,7 +75,7 @@ const Header = () => {
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOutIcon className="size-4 mr-2" />
+                    <LogOutIcon className="mr-2 size-4" />
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>

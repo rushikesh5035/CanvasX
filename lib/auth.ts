@@ -1,12 +1,15 @@
 import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import prisma from "./prisma";
-import bcrypt from "bcryptjs";
+import Google from "next-auth/providers/google";
+
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaClient as StandardPrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+
+import prisma from "./prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma as unknown as StandardPrismaClient),
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -38,7 +41,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const isValidPassword = await bcrypt.compare(
           credentials.password,
-          user.password,
+          user.password
         );
 
         if (!isValidPassword) throw new Error("Invalid email or password");

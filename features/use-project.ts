@@ -1,6 +1,7 @@
+import { useRouter } from "next/navigation";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export const useCreateProject = () => {
@@ -11,8 +12,7 @@ export const useCreateProject = () => {
     onSuccess: (data) => {
       router.push(`/project/${data.data.id}`);
     },
-    onError: (error) => {
-      console.log("Error creating project:", error);
+    onError: () => {
       toast.error("Failed to create project.");
     },
   });
@@ -38,8 +38,7 @@ export const useDeleteProject = () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success("Project deleted successfully");
     },
-    onError: (error) => {
-      console.log("Error deleting project:", error);
+    onError: () => {
       toast.error("Failed to delete project");
     },
   });

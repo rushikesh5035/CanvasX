@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
+
 import { signIn } from "next-auth/react";
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import Link from "next/link";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -22,7 +24,7 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md space-y-6 p-8">
-        <h1 className="text-2xl font-bold text-center">Sign In</h1>
+        <h1 className="text-center text-2xl font-bold">Sign In</h1>
 
         <Button
           onClick={() => signIn("google", { callbackUrl: "/" })}
@@ -37,7 +39,7 @@ export default function SignInPage() {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
+            <span className="bg-background text-muted-foreground px-2">
               Or continue with
             </span>
           </div>
@@ -63,9 +65,11 @@ export default function SignInPage() {
           </Button>
         </form>
 
-        <div className="text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" className="underline">Create new</Link>
+        <div className="text-muted-foreground text-center text-sm">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="underline">
+            Create new
+          </Link>
         </div>
       </div>
     </div>

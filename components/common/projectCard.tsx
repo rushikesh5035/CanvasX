@@ -1,10 +1,12 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
-import { useRouter } from "next/navigation";
 import React, { memo, useState } from "react";
-import { ProjectType } from "@/types/project";
+
+import { useRouter } from "next/navigation";
+
+import { formatDistanceToNow } from "date-fns";
 import { FolderOpenDotIcon, Trash2 } from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useDeleteProject } from "@/features/use-project";
+import { ProjectType } from "@/types/project";
 
 const ProjectCard = ({ project }: { project: ProjectType }) => {
   const router = useRouter();
@@ -50,36 +53,34 @@ const ProjectCard = ({ project }: { project: ProjectType }) => {
     <>
       <div
         role="button"
-        className="w-full flex flex-col border rounded-xl cursor-pointer
-    hover:shadow-md overflow-hidden"
+        className="flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border hover:shadow-md"
         onClick={onRoute}
       >
-        <div className="h-40 bg[#eee] relative overflow-hidden flex items-center justify-center">
+        <div className="bg[#eee] relative flex h-40 items-center justify-center overflow-hidden">
           {thumbnail ? (
             <img
               src={thumbnail}
-              className="w-full h-full object-cover object-left
-           scale-110"
+              className="h-full w-full scale-110 object-cover object-left"
             />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+            <div className="bg-primary/20 text-primary flex h-16 w-16 items-center justify-center rounded-full">
               <FolderOpenDotIcon />
             </div>
           )}
         </div>
 
-        <div className="p-4 flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm truncate w-full mb-1 line-clamp-1">
+        <div className="flex items-start justify-between gap-2 p-4">
+          <div className="min-w-0 flex-1">
+            <h3 className="mb-1 line-clamp-1 w-full truncate text-sm font-semibold">
               {project.name}
             </h3>
-            <p className="text-xs text-muted-foreground">{timeAgo}</p>
+            <p className="text-muted-foreground text-xs">{timeAgo}</p>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleDelete}
-            className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10 hover:cursor-pointer flex-shrink-0"
+            className="h-8 shrink-0 px-2 text-red-500 hover:cursor-pointer hover:bg-red-500/10 hover:text-red-600"
           >
             <Trash2 className="h-4 w-4" />
           </Button>

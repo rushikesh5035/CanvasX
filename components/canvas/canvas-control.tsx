@@ -1,7 +1,9 @@
-import { TOOL_MODE_ENUM, ToolModeType } from "@/constant/canvas";
-import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
 import { HandIcon, MinusIcon, MousePointerIcon, PlusIcon } from "lucide-react";
+
+import { TOOL_MODE_ENUM, ToolModeType } from "@/constant/canvas";
+import { cn } from "@/lib/utils";
+
+import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 
 type PropsType = {
@@ -19,21 +21,14 @@ const CanvasControls = ({
   setToolMode,
 }: PropsType) => {
   return (
-    <div
-      className="
-   -translate-x-1/2 absolute bottom-4 left-1/2
-   flex items-center gap-3 rounded-full border
-   bg-black dark:bg-muted py-1.5 px-4 shadow-md text-white!
-
-  "
-    >
+    <div className="dark:bg-muted absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border bg-black px-4 py-1.5 text-white! shadow-md">
       <div className="flex items-center gap-1">
         <Button
           size="icon-sm"
           variant="ghost"
           className={cn(
-            "rounded-full cursor-pointer hover:bg-white/20! text-white!",
-            toolMode === TOOL_MODE_ENUM.SELECT && "bg-white/20",
+            "cursor-pointer rounded-full text-white! hover:bg-white/20!",
+            toolMode === TOOL_MODE_ENUM.SELECT && "bg-white/20"
           )}
           onClick={() => setToolMode(TOOL_MODE_ENUM.SELECT)}
         >
@@ -43,8 +38,8 @@ const CanvasControls = ({
           size="icon-sm"
           variant="ghost"
           className={cn(
-            "rounded-full cursor-pointer hover:bg-white/20! text-white!",
-            toolMode === TOOL_MODE_ENUM.HAND && "bg-white/20",
+            "cursor-pointer rounded-full text-white! hover:bg-white/20!",
+            toolMode === TOOL_MODE_ENUM.HAND && "bg-white/20"
           )}
           onClick={() => setToolMode(TOOL_MODE_ENUM.HAND)}
         >
@@ -59,7 +54,7 @@ const CanvasControls = ({
           size="icon-sm"
           variant="ghost"
           className={cn(
-            "rounded-full cursor-pointer hover:bg-white/20! text-white!",
+            "cursor-pointer rounded-full text-white! hover:bg-white/20!"
           )}
           onClick={() => zoomOut()}
         >
@@ -70,7 +65,7 @@ const CanvasControls = ({
           size="icon-sm"
           variant="ghost"
           className={cn(
-            "rounded-full cursor-pointer hover:bg-white/20! text-white!",
+            "cursor-pointer rounded-full text-white! hover:bg-white/20!"
           )}
           onClick={() => zoomIn()}
         >

@@ -1,23 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import AIPromptInput from "./prompt-input";
-import { Suggestion, Suggestions } from "../ai-elements/suggestion";
+
+import { useRouter } from "next/navigation";
+
 import { promptSuggestions } from "@/data/prompts";
-import Header from "./header";
-import { useCreateProject, useGetProjects } from "@/features/use-project";
-import { Spinner } from "../ui/spinner";
-import { ProjectType } from "@/types/project";
-import ProjectCard from "./projectCard";
+import { useCreateProject } from "@/features/use-project";
 import { useCurrentUser } from "@/lib/session";
+
+import { Suggestion, Suggestions } from "../ai-elements/suggestion";
+import Header from "./header";
+import AIPromptInput from "./prompt-input";
+import RecentProjects from "./recent-projects";
 
 const HeroSection = () => {
   const [promptText, setPromptText] = useState<string>("");
+  const router = useRouter();
 
   const { user } = useCurrentUser();
-  const userId = user?.id;
-
-  const { data: projects, isLoading, isError } = useGetProjects(userId);
 
   const { mutate, isPending } = useCreateProject();
 
@@ -27,42 +27,40 @@ const HeroSection = () => {
 
   const handleSubmit = () => {
     if (!promptText) return;
+
+    // Check if user is logged in
+    if (!user) {
+      router.push("/signin");
+      return;
+    }
+
     mutate(promptText);
   };
 
   return (
-    <div className="w-full min-h-screen">
+    <div className="min-h-screen w-full">
       <div className="flex flex-col">
         <Header />
 
         <div className="relative overflow-hidden pt-28">
-          <div
-            className="max-w-6xl mx-auto flex flex-col
-         items-center justify-center gap-8"
-          >
+          <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-8">
             <div className="space-y-3">
-              <h1
-                className="text-center font-semibold text-4xl
-            tracking-tight sm:text-5xl"
-              >
+              <h1 className="text-center text-4xl font-semibold tracking-tight sm:text-5xl">
                 Design mobile apps <br className="md:hidden" />
                 <span className="text-primary">in minutes</span>
               </h1>
-              <div className="mx-auto max-w-2xl ">
-                <p className="text-center font-medium text-foreground leading-relaxed sm:text-lg">
+              <div className="mx-auto max-w-2xl">
+                <p className="text-foreground text-center leading-relaxed font-medium sm:text-lg">
                   Go from idea to beautiful app mockups in minutes by chatting
                   with AI.
                 </p>
               </div>
             </div>
 
-            <div
-              className="flex w-full max-w-3xl flex-col
-            item-center gap-8 relative z-10"
-            >
+            <div className="item-center relative z-10 flex w-full max-w-3xl flex-col gap-8">
               <div className="w-full">
                 <AIPromptInput
-                  className="ring-2 ring-primary"
+                  className="ring-primary ring-2"
                   promptText={promptText}
                   setPromptText={setPromptText}
                   isLoading={isPending}
@@ -76,7 +74,7 @@ const HeroSection = () => {
                     <Suggestion
                       key={s.label}
                       suggestion={s.label}
-                      className="text-xs! h-7! px-2.5 pt-1!"
+                      className="h-7! px-2.5 pt-1! text-xs!"
                       onClick={() => handlePromptSuggestionClick(s.value)}
                     >
                       {s.icon}
@@ -87,56 +85,17 @@ const HeroSection = () => {
               </div>
             </div>
 
-            <div
-              className="absolute -translate-x-1/2
-             left-1/2 w-[5000px] h-[3000px] top-[80%]
-             -z-10"
-            >
-              <div
-                className="-translate-x-1/2 absolute
-               bottom-[calc(100%-300px)] left-1/2
-               h-[2000px] w-[2000px]
-               opacity-20 bg-radial-primary"
-              ></div>
-              <div
-                className="absolute -mt-2.5
-              size-full rounded-[50%]
-               bg-primary/20 opacity-70
-               [box-shadow:0_-15px_24.8px_var(--primary)]"
-              ></div>
-              <div
-                className="absolute z-0 size-full
-               rounded-[50%] bg-background"
-              ></div>
+            <div className="absolute top-[80%] left-1/2 -z-10 h-750 w-1250 -translate-x-1/2">
+              <div className="bg-radial-primary absolute bottom-[calc(100%-300px)] left-1/2 h-500 w-500 -translate-x-1/2 opacity-20"></div>
+              <div className="bg-primary/20 absolute -mt-2.5 size-full rounded-[50%] opacity-70 [box-shadow:0_-15px_24.8px_var(--primary)]"></div>
+              <div className="bg-background absolute z-0 size-full rounded-[50%]"></div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Recent Project Section */}
-      <div className="w-full py-10">
-        <div className="mx-auto max-w-3xl">
-          {userId && (
-            <div>
-              <h1 className="font-medium text-xl tracking-tight">
-                Recent Projects
-              </h1>
-              {isLoading ? (
-                <div className="flex items-center justify-center py-2">
-                  <Spinner className="size-10" />
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                  {projects?.map((project: ProjectType) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-          {isError && <p className="text-red-500">Failed to load projects</p>}
-        </div>
-      </div>
+      <RecentProjects />
     </div>
   );
 };

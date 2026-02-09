@@ -1,9 +1,9 @@
 "use server";
 
+import { getSubscriptionToken, Realtime } from "@inngest/realtime";
+
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
-
-import { getSubscriptionToken, Realtime } from "@inngest/realtime";
 
 export async function fetchRealtimeSubscriptionToken() {
   const session = await auth();
@@ -12,7 +12,6 @@ export async function fetchRealtimeSubscriptionToken() {
     throw new Error("Unauthorized");
   }
 
-  // This creates a token using the Inngest API that is bound to the channel and topic:
   const token = await getSubscriptionToken(inngest, {
     channel: `user:${session.user.id}`,
     topics: [
@@ -21,6 +20,7 @@ export async function fetchRealtimeSubscriptionToken() {
       "analysis.complete",
       "frame.created",
       "generation.complete",
+      "generation.failed",
     ],
   });
 
