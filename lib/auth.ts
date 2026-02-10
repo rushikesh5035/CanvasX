@@ -3,13 +3,13 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient as StandardPrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import prisma from "./prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma as unknown as StandardPrismaClient),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  adapter: PrismaAdapter(prisma as any),
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
