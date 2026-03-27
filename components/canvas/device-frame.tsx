@@ -58,7 +58,7 @@ const DeviceFrame = ({
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (
-        event.data.type === "fRAME_HEIGHT" &&
+        event.data.type === "FRAME_HEIGHT" &&
         event.data.frameId === frameId
       ) {
         setFrameSize((prev) => ({ ...prev, height: event.data.height }));
