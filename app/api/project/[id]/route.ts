@@ -3,7 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { checkRateLimit, screenGenerationLimiter } from "@/lib/rate-limit";
+import {
+  checkRateLimit,
+  projectDeletionLimiter,
+  screenGenerationLimiter,
+} from "@/lib/rate-limit";
 import {
   getCachedProjectDetail,
   invalidateProjectCache,
@@ -201,8 +205,6 @@ export async function DELETE(
     }
 
     // Check rate limit
-    const { checkRateLimit, projectDeletionLimiter } =
-      await import("@/lib/rate-limit");
     const limit = await checkRateLimit(session.user.id, projectDeletionLimiter);
     if (!limit.allowed) {
       return NextResponse.json(
