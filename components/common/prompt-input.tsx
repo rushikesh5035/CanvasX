@@ -12,7 +12,7 @@ import {
 } from "../ui/input-group";
 import { Spinner } from "../ui/spinner";
 
-interface PropsType {
+interface PromptInputProps {
   promptText: string;
   setPromptText: (value: string) => void;
   isLoading?: boolean;
@@ -28,14 +28,11 @@ const AIPromptInput = ({
   className,
   hideSubmitBtn = false,
   onSubmit,
-}: PropsType) => {
+}: PromptInputProps) => {
   return (
-    <div className="bg-background">
+    <div className="bg-card/80">
       <InputGroup
-        className={cn(
-          "bg-background max-h-43 min-h-43 rounded-2xl",
-          className && className
-        )}
+        className={cn("max-h-40 min-h-40 rounded-2xl", className && className)}
       >
         <InputGroupTextarea
           className={cn(

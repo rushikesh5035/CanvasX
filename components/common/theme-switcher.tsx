@@ -13,7 +13,7 @@ const ThemeSwitcher = () => {
   return (
     <>
       <Button
-        variant="outline"
+        variant="ghost"
         size="icon"
         className="relative h-9 w-9 rounded-md hover:cursor-pointer"
         onClick={() => setTheme(isDark ? "light" : "dark")}
