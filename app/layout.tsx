@@ -1,6 +1,7 @@
 import { SessionProvider } from "next-auth/react";
 import { Jost } from "next/font/google";
 
+import InteractiveDotCanvas from "@/components/common/InteractiveDotCanvas";
 import { ThemeProvider } from "@/components/common/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { jsonLd, metadata as siteMetadata } from "@/config/meta";
@@ -37,6 +38,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
+              <InteractiveDotCanvas />
               {children}
               <Toaster richColors position="bottom-center" />
             </ThemeProvider>
