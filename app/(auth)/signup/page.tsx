@@ -5,6 +5,9 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 
+import { motion } from "motion/react";
+
+import Logo from "@/components/common/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -41,7 +44,6 @@ export default function SignUpPage() {
 
       const data = await res.json();
       if (!res.ok || !data?.success) {
-        // Check for rate limit error
         if (res.status === 429) {
           setError(getRateLimitMessage(data));
         } else {
@@ -50,7 +52,6 @@ export default function SignUpPage() {
         return;
       }
 
-      // Auto sign-in after successful registration
       await signIn("credentials", {
         email,
         password,
@@ -64,13 +65,23 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-md space-y-6 p-8">
-        <h1 className="text-center text-2xl font-bold">Sign Up</h1>
+    <div className="relative flex min-h-screen items-center justify-center px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative z-10 w-full max-w-md space-y-6 sm:p-8"
+      >
+        <div className="item-center flex justify-center">
+          <Logo />
+        </div>
+        <h1 className="text-card-foreground text-center text-xl font-bold sm:text-2xl">
+          Sign Up
+        </h1>
 
         <Button
           onClick={() => signIn("google", { callbackUrl: "/" })}
-          className="w-full"
+          className="w-full rounded-lg font-medium"
           variant="outline"
         >
           Continue with Google
@@ -78,22 +89,23 @@ export default function SignUpPage() {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+            <span className="border-border/60 w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background text-muted-foreground px-2">
+            <span className="bg-card/70 text-muted-foreground px-3">
               Or continue with
             </span>
           </div>
         </div>
 
-        <form onSubmit={handleSignup} className="space-y-4">
+        <form onSubmit={handleSignup} className="space-y-3.5">
           <Input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className="bg-background/50 rounded-lg"
           />
           <Input
             type="password"
@@ -101,6 +113,7 @@ export default function SignUpPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="bg-background/50 rounded-lg"
           />
           <Input
             type="password"
@@ -108,27 +121,35 @@ export default function SignUpPage() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            className="bg-background/50 rounded-lg"
           />
-          {!passwordsMatch && (
-            <div className="text-sm text-red-500">Passwords do not match.</div>
+          {!passwordsMatch && confirmPassword && (
+            <p className="text-destructive text-sm">Passwords do not match.</p>
           )}
           {error && (
-            <div className="text-sm text-red-500" role="alert">
+            <p className="text-destructive text-sm" role="alert">
               {error}
-            </div>
+            </p>
           )}
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full rounded-lg font-medium shadow-md"
+            disabled={loading}
+          >
             {loading ? "Signing up..." : "Sign Up"}
           </Button>
         </form>
 
         <div className="text-muted-foreground text-center text-sm">
           Already have an account?{" "}
-          <Link href="/signin" className="underline">
+          <Link
+            href="/signin"
+            className="text-primary font-medium hover:underline"
+          >
             Sign In
           </Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
