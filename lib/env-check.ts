@@ -3,6 +3,10 @@ export function checkRequiredEnvVars() {
     GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
     AUTH_SECRET: process.env.AUTH_SECRET,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+    INNGEST_SIGNING_KEY: process.env.INNGEST_SIGNING_KEY,
+    INNGEST_EVENT_KEY: process.env.INNGEST_EVENT_KEY,
   };
 
   const missing: string[] = [];
@@ -30,6 +34,21 @@ export function checkRequiredEnvVars() {
       );
     }
 
+    if (missing.includes("UPSTASH_REDIS_REST_URL")) {
+      console.error("\n🔴 To get Upstash Redis credentials:");
+      console.error("   1. Visit: https://console.upstash.com/");
+      console.error("   2. Create a new Redis database");
+      console.error("   3. Copy REST URL and REST Token");
+    }
+
+    if (missing.includes("INNGEST_SIGNING_KEY")) {
+      console.error("\n⚡ To get Inngest credentials:");
+      console.error("   1. Visit: https://app.inngest.com/");
+      console.error("   2. Create a new project or select existing");
+      console.error("   3. Go to Settings > Keys");
+      console.error("   4. Copy Signing Key and Event Key");
+    }
+
     return false;
   }
 
@@ -53,4 +72,32 @@ export function validateGeminiApiKey(): boolean {
   }
 
   return true;
+}
+
+export function validateRedisCredentials(): boolean {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (!url || !token) {
+    console.error("❌ Redis configuration incomplete");
+    console.error("   Missing:", !url ? "UPSTASH_REDIS_REST_URL" : "");
+    console.error("   Missing:", !token ? "UPSTASH_REDIS_REST_TOKEN" : "");
+    return false;
+  }
+
+  if (!url.startsWith("https://")) {
+    console.error("⚠️  UPSTASH_REDIS_REST_URL should start with https://");
+    return false;
+  }
+
+  return true;
+}
+
+export function validateAllKeys(): boolean {
+  const checks = [
+    validateGeminiApiKey(),
+    validateRedisCredentials(),
+    checkRequiredEnvVars(),
+  ];
+  return checks.every((check) => check === true);
 }
