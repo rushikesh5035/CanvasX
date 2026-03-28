@@ -2,6 +2,7 @@
 
 import React, { memo, useState } from "react";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { formatDistanceToNow } from "date-fns";
@@ -58,9 +59,12 @@ const ProjectCard = ({ project }: { project: ProjectType }) => {
       >
         <div className="bg[#eee] relative flex h-40 items-center justify-center overflow-hidden">
           {thumbnail ? (
-            <img
+            <Image
               src={thumbnail}
-              className="h-full w-full scale-110 object-cover object-left"
+              alt={`${project.name} project thumbnail`}
+              className="h-full w-full object-cover"
+              width={320}
+              height={180}
             />
           ) : (
             <div className="bg-primary/20 text-primary flex h-16 w-16 items-center justify-center rounded-full">
