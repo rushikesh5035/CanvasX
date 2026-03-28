@@ -18,11 +18,6 @@ export default auth(async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/signin", req.url));
   }
 
-  // // Protect dashboard route
-  // if (!session && pathname.startsWith("/dashboard")) {
-  //   return NextResponse.redirect(new URL("/signin", request.url));
-  // }
-
   return NextResponse.next();
 });
 export const config = {

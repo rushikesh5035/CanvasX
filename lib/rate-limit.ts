@@ -47,5 +47,10 @@ export async function checkRateLimit(userId: string, limiter: Ratelimit) {
     remaining,
     resetAt: new Date(reset),
     retryAfter: success ? 0 : Math.ceil((reset - Date.now()) / 1000),
+    headers: {
+      "X-RateLimit-Limit": limit.toString(),
+      "X-RateLimit-Remaining": remaining.toString(),
+      "X-RateLimit-Reset": reset.toString(),
+    },
   };
 }
