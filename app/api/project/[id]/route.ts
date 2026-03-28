@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { inngest } from "@/inngest/client";
+import {
+  handlePrismaError,
+  notFoundResponse,
+  rateLimitResponse,
+  successResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from "@/lib/api-response";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import {
@@ -22,15 +30,11 @@ export async function GET(
     const { id } = await params;
     const session = await auth();
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!session?.user?.id) return unauthorizedResponse();
 
     // Try cache first
     const cached = await getCachedProjectDetail(id);
-    if (cached) {
-      return NextResponse.json(cached);
-    }
+    if (cached) return successResponse(cached, { cached: true });
 
     // Cache miss - fetch from database
     const project = await prisma.project.findFirst({
@@ -43,20 +47,14 @@ export async function GET(
       },
     });
 
-    if (!project) {
-      return NextResponse.json({ error: "Project not found" }, { status: 404 });
-    }
+    if (!project) return notFoundResponse("project");
 
     // Cache the result
     await setCachedProjectDetail(id, project);
 
-    return NextResponse.json(project);
+    return successResponse(project);
   } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: "Failed to fetch project" },
-      { status: 500 }
-    );
+    return handlePrismaError(error, "fetch project");
   }
 }
 
@@ -69,37 +67,19 @@ export async function POST(
     const { prompt } = await request.json();
 
     const session = await auth();
-    const user = session?.user;
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!session?.user?.id) return unauthorizedResponse();
 
     // Check rate limit
     const limit = await checkRateLimit(
       session.user.id,
       screenGenerationLimiter
     );
-    if (!limit.allowed) {
-      return NextResponse.json(
-        {
-          error: "Too many generation requests. Please try again later.",
-          retryAfter: limit.retryAfter,
-        },
-        {
-          status: 429,
-          headers: {
-            "X-RateLimit-Limit": limit.limit.toString(),
-            "X-RateLimit-Remaining": "0",
-            "X-RateLimit-Reset": limit.resetAt.getTime().toString(),
-            "Retry-After": limit.retryAfter.toString(),
-          },
-        }
-      );
-    }
+    if (!limit.allowed)
+      return rateLimitResponse(limit.retryAfter, limit.limit, limit.resetAt);
 
     if (!prompt || typeof prompt !== "string")
-      throw new Error("Invalid prompt");
+      return validationErrorResponse("Prompt is required and must be a string");
 
     const userId = session.user.id;
     const project = await prisma.project.findFirst({
@@ -112,7 +92,7 @@ export async function POST(
       },
     });
 
-    if (!project) throw new Error("Project not found");
+    if (!project) return notFoundResponse("project");
 
     // Invalidate caches since generation will modify the project
     await invalidateProjectCache(userId, id);
@@ -133,18 +113,10 @@ export async function POST(
       console.log("Error triggering inngest function:", error);
     }
 
-    return NextResponse.json({
-      success: true,
-      data: project,
-    });
+    return successResponse(project);
   } catch (error) {
     console.log("Error occurred", error);
-    return NextResponse.json(
-      {
-        error: "Failed to generate project",
-      },
-      { status: 500 }
-    );
+    return handlePrismaError(error, "generate screen");
   }
 }
 
@@ -158,10 +130,10 @@ export async function PATCH(
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
-    if (!themeId) throw new Error("Invalid themeId");
+    if (!themeId) return validationErrorResponse("Theme ID is required");
 
     const userId = session.user.id;
     const project = await prisma.project.update({
@@ -177,18 +149,10 @@ export async function PATCH(
     // Invalidate caches
     await invalidateProjectCache(userId, id);
 
-    return NextResponse.json({
-      success: true,
-      data: project,
-    });
+    return successResponse(project);
   } catch (error) {
     console.log("Error occurred", error);
-    return NextResponse.json(
-      {
-        error: "Failed to update project",
-      },
-      { status: 500 }
-    );
+    return handlePrismaError(error, "update project");
   }
 }
 
@@ -201,27 +165,13 @@ export async function DELETE(
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     // Check rate limit
     const limit = await checkRateLimit(session.user.id, projectDeletionLimiter);
     if (!limit.allowed) {
-      return NextResponse.json(
-        {
-          error: "Too many deletion requests. Please slow down.",
-          retryAfter: limit.retryAfter,
-        },
-        {
-          status: 429,
-          headers: {
-            "X-RateLimit-Limit": limit.limit.toString(),
-            "X-RateLimit-Remaining": "0",
-            "X-RateLimit-Reset": limit.resetAt.getTime().toString(),
-            "Retry-After": limit.retryAfter.toString(),
-          },
-        }
-      );
+      return rateLimitResponse(limit.retryAfter, limit.limit, limit.resetAt);
     }
 
     const userId = session.user.id;
@@ -244,17 +194,9 @@ export async function DELETE(
     // Invalidate caches
     await invalidateProjectCache(userId, id);
 
-    return NextResponse.json({
-      success: true,
-      message: "Project deleted successfully",
-    });
+    return successResponse({ message: "Project deleted successfully" });
   } catch (error) {
     console.log("Error deleting project:", error);
-    return NextResponse.json(
-      {
-        error: "Failed to delete project",
-      },
-      { status: 500 }
-    );
+    return handlePrismaError(error, "delete project");
   }
 }

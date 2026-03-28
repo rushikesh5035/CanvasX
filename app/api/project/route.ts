@@ -2,6 +2,13 @@ import { NextResponse } from "next/server";
 
 import { generateProjectName } from "@/app/action/action";
 import { inngest } from "@/inngest/client";
+import {
+  handlePrismaError,
+  rateLimitResponse,
+  successResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from "@/lib/api-response";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { checkRateLimit, projectCreationLimiter } from "@/lib/rate-limit";
@@ -19,31 +26,18 @@ export async function POST(request: Request) {
     const user = session?.user;
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      // return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     // Check rate limit
     const limit = await checkRateLimit(user.id, projectCreationLimiter);
-    if (!limit.allowed) {
-      return NextResponse.json(
-        {
-          error: "Too many projects created. Please try again later.",
-          retryAfter: limit.retryAfter,
-        },
-        {
-          status: 429,
-          headers: {
-            "X-RateLimit-Limit": limit.limit.toString(),
-            "X-RateLimit-Remaining": "0",
-            "X-RateLimit-Reset": limit.resetAt.getTime().toString(),
-            "Retry-After": limit.retryAfter.toString(),
-          },
-        }
-      );
-    }
+
+    if (!limit.allowed)
+      return rateLimitResponse(limit.retryAfter, limit.limit, limit.resetAt);
 
     if (!prompt || typeof prompt !== "string")
-      throw new Error("Invalid prompt");
+      return validationErrorResponse("Prompt is required and must be a string");
 
     const userId = session.user.id;
 
@@ -54,10 +48,7 @@ export async function POST(request: Request) {
 
     if (!dbUser) {
       console.error("User not found in database:", userId);
-      return NextResponse.json(
-        { error: "User not found. Please sign in again." },
-        { status: 404 }
-      );
+      return unauthorizedResponse("User not found. Please sign in again.");
     }
 
     const projectName = await generateProjectName(prompt);
@@ -86,31 +77,9 @@ export async function POST(request: Request) {
       console.log("Error triggering inngest function:", error);
     }
 
-    return NextResponse.json({
-      success: true,
-      data: project,
-    });
+    return successResponse(project);
   } catch (error) {
-    console.error("Error creating project:", error);
-
-    // Handle specific Prisma errors
-    if (error instanceof Error && "code" in error) {
-      const prismaError = error as { code: string };
-      if (prismaError.code === "P2003") {
-        return NextResponse.json(
-          { error: "Invalid user reference. Please sign in again." },
-          { status: 400 }
-        );
-      }
-    }
-
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Failed to create project",
-      },
-      { status: 500 }
-    );
+    return handlePrismaError(error, "create project");
   }
 }
 
@@ -119,7 +88,7 @@ export async function GET() {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     // Try cache first
@@ -142,19 +111,9 @@ export async function GET() {
     // Cache the result
     await setCachedProjectList(session.user.id, project);
 
-    return NextResponse.json({
-      success: true,
-      data: project,
-      cached: false,
-    });
+    return successResponse(project);
   } catch (error) {
     console.error("Error fetching projects:", error);
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Failed to fetch projects",
-      },
-      { status: 500 }
-    );
+    return handlePrismaError(error, "fetch projects");
   }
 }
