@@ -14,7 +14,8 @@ async function getChromiumPath(): Promise<string> {
     const chromium = (await import("@sparticuz/chromium-min")).default;
     downloadPromise = chromium
       .executablePath(
-        "https://github.com/gabenunez/puppeteer-on-vercel/raw/refs/heads/main/example/chromium-dont-use-in-prod.tar"
+        // "https://github.com/gabenunez/puppeteer-on-vercel/raw/refs/heads/main/example/chromium-dont-use-in-prod.tar"
+        "https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar"
       )
       .then((path) => {
         cachedExecutablePath = path;
