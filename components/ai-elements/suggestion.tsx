@@ -31,11 +31,7 @@ export type SuggestionProps = Omit<ComponentProps<typeof Button>, "onClick"> & {
 export const Suggestion = ({
   suggestion,
   onClick,
-  className,
-  variant = "outline",
-  size = "sm",
   children,
-  ...props
 }: SuggestionProps) => {
   const handleClick = () => {
     onClick?.(suggestion);
@@ -43,20 +39,6 @@ export const Suggestion = ({
 
   return (
     <div>
-      {/* <Button
-        className={cn(
-          "border-border/60 bg-card/50 hover:bg-primary/10 hover:border-primary/40 hover:text-primary cursor-pointer rounded-lg px-3.5 py-1.5 text-xs font-normal backdrop-blur-sm transition-all duration-200",
-          className
-        )}
-        onClick={handleClick}
-        size={size}
-        type="button"
-        variant={variant}
-        {...props}
-      >
-        {children || suggestion}
-      </Button> */}
-
       <Badge
         variant="outline"
         className="border-border/60 bg-card/50 hover:bg-primary/10 hover:border-primary/40 hover:text-primary cursor-pointer rounded-lg px-3.5 py-1.5 text-xs font-normal backdrop-blur-sm transition-all duration-200"

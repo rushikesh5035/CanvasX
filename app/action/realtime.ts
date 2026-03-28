@@ -1,6 +1,6 @@
 "use server";
 
-import { getSubscriptionToken, Realtime } from "@inngest/realtime";
+import { getSubscriptionToken } from "@inngest/realtime";
 
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";

@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 
-import {
-  ChevronLeft,
-  ChevronRight,
-  CodeIcon,
-  DownloadIcon,
-  GripVertical,
-} from "lucide-react";
+import { CodeIcon, DownloadIcon, GripVertical } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
