@@ -78,7 +78,7 @@ export const generateScreen = inngest.createFunction(
           : `USER REQUEST:${prompt}`.trim();
 
         const { output } = await generateText({
-          model: google("gemini-2.5-flash"),
+          model: google("gemini-3-flash"),
           output: Output.object({
             schema: AnalysisSchema,
           }),
@@ -122,7 +122,7 @@ export const generateScreen = inngest.createFunction(
 
         await step.run(`generated-screen-${i}`, async () => {
           const result = await generateText({
-            model: google("gemini-2.5-flash"),
+            model: google("gemini-3-flash"),
             system: GENERATION_SYSTEM_PROMPT,
             tools: {
               searchUnsplash: unsplashTool,
