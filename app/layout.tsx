@@ -1,10 +1,11 @@
+import { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Jost } from "next/font/google";
 
 import InteractiveDotCanvas from "@/components/common/InteractiveDotCanvas";
 import { ThemeProvider } from "@/components/common/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { jsonLd, metadata as siteMetadata } from "@/config/meta";
+import siteConfig, { generatePageMetadata } from "@/config/meta";
 import { QueryProvider } from "@/context/query-provider";
 
 import "./globals.css";
@@ -14,7 +15,22 @@ const jostSans = Jost({
   subsets: ["latin"],
 });
 
-export const metadata = siteMetadata;
+export const metadata: Metadata = {
+  ...generatePageMetadata("/"),
+  title: {
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
+  },
+  icons: {
+    icon: [
+      {
+        url: "/favicon.ico",
+        sizes: "any",
+        type: "image/x-icon",
+      },
+    ],
+  },
+};
 
 export default function RootLayout({
   children,
@@ -22,13 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </head>
+    <html lang="en" suppressHydrationWarning>
       <body className={`${jostSans.className} antialiased`}>
         <SessionProvider>
           <QueryProvider>
