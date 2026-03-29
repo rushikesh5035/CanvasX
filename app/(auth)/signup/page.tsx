@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { Metadata } from "next";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 
@@ -11,9 +10,6 @@ import { motion } from "motion/react";
 import Logo from "@/components/common/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { generatePageMetadata } from "@/config/meta";
-
-export const metadata: Metadata = generatePageMetadata("/signup");
 
 interface RateLimitError {
   error: string;
