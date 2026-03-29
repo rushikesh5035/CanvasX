@@ -10,6 +10,7 @@ import { ProjectType } from "@/types/project";
 
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
+import ProjectCardSkeleton from "./project-card-skeleton";
 import ProjectCard from "./projectCard";
 
 const RecentProjects = () => {
@@ -35,8 +36,10 @@ const RecentProjects = () => {
             Recent Projects
           </h1>
           {isLoading ? (
-            <div className="flex items-center justify-center py-2">
-              <Spinner className="size-10" />
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+              <ProjectCardSkeleton />
+              <ProjectCardSkeleton />
+              <ProjectCardSkeleton />
             </div>
           ) : (
             <>

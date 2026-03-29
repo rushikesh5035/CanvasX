@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 import Header from "@/components/common/header";
+import ProjectCardSkeleton from "@/components/common/project-card-skeleton";
 import ProjectCard from "@/components/common/projectCard";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -62,8 +63,10 @@ export default function ProjectsPage() {
 
         {/* Projects Grid */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <Spinner className="size-12" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <ProjectCardSkeleton key={index} />
+            ))}
           </div>
         ) : isError ? (
           <div className="flex flex-col items-center justify-center py-20">
