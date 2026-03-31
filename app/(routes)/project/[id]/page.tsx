@@ -13,7 +13,7 @@ const Page = () => {
 
   const { data: project, isPending } = useGetProjectById(id);
 
-  const hasInitialData = project?.frames.length > 0;
+  const hasInitialData = (project?.frames?.length ?? 0) > 0;
 
   if (!isPending && !project) {
     return <div>Project not found</div>;

@@ -27,6 +27,7 @@ const RecentProjects = () => {
   };
 
   if (!userId) return null;
+  if (!isLoading && (!projects || projects.length === 0)) return null;
 
   return (
     <div className="w-full py-10">
