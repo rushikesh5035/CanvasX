@@ -416,6 +416,7 @@ export const ModelName = {
   Account: "Account",
   Project: "Project",
   Frame: "Frame",
+  Subscription: "Subscription",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -437,7 +438,7 @@ export type TypeMap<
     omit: GlobalOmitOptions;
   };
   meta: {
-    modelProps: "user" | "account" | "project" | "frame";
+    modelProps: "user" | "account" | "project" | "frame" | "subscription";
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -745,6 +746,82 @@ export type TypeMap<
         };
       };
     };
+    Subscription: {
+      payload: Prisma.$SubscriptionPayload<ExtArgs>;
+      fields: Prisma.SubscriptionFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.SubscriptionFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.SubscriptionFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>;
+        };
+        findFirst: {
+          args: Prisma.SubscriptionFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.SubscriptionFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>;
+        };
+        findMany: {
+          args: Prisma.SubscriptionFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[];
+        };
+        create: {
+          args: Prisma.SubscriptionCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>;
+        };
+        createMany: {
+          args: Prisma.SubscriptionCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.SubscriptionCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[];
+        };
+        delete: {
+          args: Prisma.SubscriptionDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>;
+        };
+        update: {
+          args: Prisma.SubscriptionUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>;
+        };
+        deleteMany: {
+          args: Prisma.SubscriptionDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.SubscriptionUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.SubscriptionUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[];
+        };
+        upsert: {
+          args: Prisma.SubscriptionUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>;
+        };
+        aggregate: {
+          args: Prisma.SubscriptionAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSubscription>;
+        };
+        groupBy: {
+          args: Prisma.SubscriptionGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.SubscriptionCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.SubscriptionCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -841,6 +918,24 @@ export const FrameScalarFieldEnum = {
 export type FrameScalarFieldEnum =
   (typeof FrameScalarFieldEnum)[keyof typeof FrameScalarFieldEnum];
 
+export const SubscriptionScalarFieldEnum = {
+  id: "id",
+  userId: "userId",
+  polarSubscriptionId: "polarSubscriptionId",
+  polarCustomerId: "polarCustomerId",
+  polarProductId: "polarProductId",
+  planId: "planId",
+  status: "status",
+  currentPeriodStart: "currentPeriodStart",
+  currentPeriodEnd: "currentPeriodEnd",
+  cancelAtPeriodEnd: "cancelAtPeriodEnd",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type SubscriptionScalarFieldEnum =
+  (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum];
+
 export const SortOrder = {
   asc: "asc",
   desc: "desc",
@@ -912,6 +1007,14 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<
   $PrismaModel,
   "Int[]"
+>;
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "Boolean"
 >;
 
 /**
@@ -1037,6 +1140,7 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit;
   project?: Prisma.ProjectOmit;
   frame?: Prisma.FrameOmit;
+  subscription?: Prisma.SubscriptionOmit;
 };
 
 /* Types for Logging */

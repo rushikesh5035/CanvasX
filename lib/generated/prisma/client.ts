@@ -64,3 +64,8 @@ export type Project = Prisma.ProjectModel;
  *
  */
 export type Frame = Prisma.FrameModel;
+/**
+ * Model Subscription
+ *
+ */
+export type Subscription = Prisma.SubscriptionModel;

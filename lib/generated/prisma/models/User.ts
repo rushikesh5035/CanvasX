@@ -212,6 +212,10 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
   accounts?: Prisma.AccountListRelationFilter;
   projects?: Prisma.ProjectListRelationFilter;
+  subscription?: Prisma.XOR<
+    Prisma.SubscriptionNullableScalarRelationFilter,
+    Prisma.SubscriptionWhereInput
+  > | null;
 };
 
 export type UserOrderByWithRelationInput = {
@@ -225,6 +229,7 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder;
   accounts?: Prisma.AccountOrderByRelationAggregateInput;
   projects?: Prisma.ProjectOrderByRelationAggregateInput;
+  subscription?: Prisma.SubscriptionOrderByWithRelationInput;
 };
 
 export type UserWhereUniqueInput = Prisma.AtLeast<
@@ -246,6 +251,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
     accounts?: Prisma.AccountListRelationFilter;
     projects?: Prisma.ProjectListRelationFilter;
+    subscription?: Prisma.XOR<
+      Prisma.SubscriptionNullableScalarRelationFilter,
+      Prisma.SubscriptionWhereInput
+    > | null;
   },
   "id" | "email"
 >;
@@ -297,6 +306,7 @@ export type UserCreateInput = {
   updatedAt?: Date | string;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput;
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput;
 };
 
 export type UserUncheckedCreateInput = {
@@ -310,6 +320,7 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput;
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput;
 };
 
 export type UserUpdateInput = {
@@ -327,6 +338,7 @@ export type UserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput;
+  subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateInput = {
@@ -344,6 +356,7 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput;
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput;
 };
 
 export type UserCreateManyInput = {
@@ -493,6 +506,32 @@ export type UserUpdateOneRequiredWithoutProjectsNestedInput = {
   >;
 };
 
+export type UserCreateNestedOneWithoutSubscriptionInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutSubscriptionInput,
+    Prisma.UserUncheckedCreateWithoutSubscriptionInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionInput;
+  connect?: Prisma.UserWhereUniqueInput;
+};
+
+export type UserUpdateOneRequiredWithoutSubscriptionNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutSubscriptionInput,
+    Prisma.UserUncheckedCreateWithoutSubscriptionInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionInput;
+  upsert?: Prisma.UserUpsertWithoutSubscriptionInput;
+  connect?: Prisma.UserWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.UserUpdateToOneWithWhereWithoutSubscriptionInput,
+      Prisma.UserUpdateWithoutSubscriptionInput
+    >,
+    Prisma.UserUncheckedUpdateWithoutSubscriptionInput
+  >;
+};
+
 export type UserCreateWithoutAccountsInput = {
   id?: string;
   name?: string | null;
@@ -503,6 +542,7 @@ export type UserCreateWithoutAccountsInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput;
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -515,6 +555,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput;
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -559,6 +600,7 @@ export type UserUpdateWithoutAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput;
+  subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -575,6 +617,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput;
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput;
 };
 
 export type UserCreateWithoutProjectsInput = {
@@ -587,6 +630,7 @@ export type UserCreateWithoutProjectsInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutProjectsInput = {
@@ -599,6 +643,7 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutProjectsInput = {
@@ -643,6 +688,7 @@ export type UserUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
+  subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -659,6 +705,95 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput;
+};
+
+export type UserCreateWithoutSubscriptionInput = {
+  id?: string;
+  name?: string | null;
+  email: string;
+  emailVerified?: Date | string | null;
+  image?: string | null;
+  password?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput;
+};
+
+export type UserUncheckedCreateWithoutSubscriptionInput = {
+  id?: string;
+  name?: string | null;
+  email: string;
+  emailVerified?: Date | string | null;
+  image?: string | null;
+  password?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput;
+};
+
+export type UserCreateOrConnectWithoutSubscriptionInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSubscriptionInput,
+    Prisma.UserUncheckedCreateWithoutSubscriptionInput
+  >;
+};
+
+export type UserUpsertWithoutSubscriptionInput = {
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutSubscriptionInput,
+    Prisma.UserUncheckedUpdateWithoutSubscriptionInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSubscriptionInput,
+    Prisma.UserUncheckedCreateWithoutSubscriptionInput
+  >;
+  where?: Prisma.UserWhereInput;
+};
+
+export type UserUpdateToOneWithWhereWithoutSubscriptionInput = {
+  where?: Prisma.UserWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutSubscriptionInput,
+    Prisma.UserUncheckedUpdateWithoutSubscriptionInput
+  >;
+};
+
+export type UserUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  emailVerified?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  emailVerified?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 /**
@@ -726,6 +861,7 @@ export type UserSelect<
     updatedAt?: boolean;
     accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>;
     projects?: boolean | Prisma.User$projectsArgs<ExtArgs>;
+    subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["user"]
@@ -796,6 +932,7 @@ export type UserInclude<
 > = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>;
   projects?: boolean | Prisma.User$projectsArgs<ExtArgs>;
+  subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>;
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<
@@ -815,6 +952,7 @@ export type $UserPayload<
   objects: {
     accounts: Prisma.$AccountPayload<ExtArgs>[];
     projects: Prisma.$ProjectPayload<ExtArgs>[];
+    subscription: Prisma.$SubscriptionPayload<ExtArgs> | null;
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1398,6 +1536,19 @@ export interface Prisma__UserClient<
       >
     | Null
   >;
+  subscription<T extends Prisma.User$subscriptionArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$subscriptionArgs<ExtArgs>>
+  ): Prisma.Prisma__SubscriptionClient<
+    runtime.Types.Result.GetResult<
+      Prisma.$SubscriptionPayload<ExtArgs>,
+      T,
+      "findUniqueOrThrow",
+      GlobalOmitOptions
+    > | null,
+    null,
+    ExtArgs,
+    GlobalOmitOptions
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1944,6 +2095,28 @@ export type User$projectsArgs<
   take?: number;
   skip?: number;
   distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[];
+};
+
+/**
+ * User.subscription
+ */
+export type User$subscriptionArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null;
+  where?: Prisma.SubscriptionWhereInput;
 };
 
 /**

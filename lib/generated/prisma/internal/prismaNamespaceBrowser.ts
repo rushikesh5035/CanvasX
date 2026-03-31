@@ -57,6 +57,7 @@ export const ModelName = {
   Account: "Account",
   Project: "Project",
   Frame: "Frame",
+  Subscription: "Subscription",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -131,6 +132,24 @@ export const FrameScalarFieldEnum = {
 
 export type FrameScalarFieldEnum =
   (typeof FrameScalarFieldEnum)[keyof typeof FrameScalarFieldEnum];
+
+export const SubscriptionScalarFieldEnum = {
+  id: "id",
+  userId: "userId",
+  polarSubscriptionId: "polarSubscriptionId",
+  polarCustomerId: "polarCustomerId",
+  polarProductId: "polarProductId",
+  planId: "planId",
+  status: "status",
+  currentPeriodStart: "currentPeriodStart",
+  currentPeriodEnd: "currentPeriodEnd",
+  cancelAtPeriodEnd: "cancelAtPeriodEnd",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type SubscriptionScalarFieldEnum =
+  (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum];
 
 export const SortOrder = {
   asc: "asc",
