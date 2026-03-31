@@ -21,6 +21,7 @@ import {
   invalidateProjectCache,
   setCachedProjectDetail,
 } from "@/lib/redis";
+import { canGenerateScreen } from "@/lib/subscription";
 
 export async function GET(
   request: NextRequest,
@@ -93,6 +94,13 @@ export async function POST(
     });
 
     if (!project) return notFoundResponse("project");
+
+    const canCreate = await canGenerateScreen(userId, id);
+    if (!canCreate) {
+      return validationErrorResponse(
+        "You've reached your screen limit for this project. Upgrade your plan for more screens."
+      );
+    }
 
     // Invalidate caches since generation will modify the project
     await invalidateProjectCache(userId, id);

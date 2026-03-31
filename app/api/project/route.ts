@@ -17,6 +17,7 @@ import {
   invalidateProjectCache,
   setCachedProjectList,
 } from "@/lib/redis";
+import { canCreateProject } from "@/lib/subscription";
 
 export async function POST(request: Request) {
   try {
@@ -40,6 +41,14 @@ export async function POST(request: Request) {
       return validationErrorResponse("Prompt is required and must be a string");
 
     const userId = session.user.id;
+
+    const canCreate = await canCreateProject(userId);
+
+    if (!canCreate) {
+      return validationErrorResponse(
+        "  You've reached your project limit. Upgrade your plan to create more projects."
+      );
+    }
 
     // Verify user exists in database
     const dbUser = await prisma.user.findUnique({
