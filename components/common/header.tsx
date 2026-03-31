@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-import { LogOutIcon, Menu, X } from "lucide-react";
+import { CreditCard, LogOutIcon, Menu, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { useCurrentUser } from "@/lib/session";
@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Logo from "./logo";
+import PlanBadge from "./plan-badge";
 import ThemeSwitcher from "./theme-switcher";
 
 const baseNavLinks = [
@@ -88,7 +89,7 @@ const Header = () => {
 
           <nav
             ref={navContainerRef}
-            className="relative hidden flex-1 items-center justify-center gap-1 md:flex"
+            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex"
             onMouseLeave={handleMouseLeave}
           >
             <div
@@ -122,6 +123,7 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <PlanBadge />
             <ThemeSwitcher />
 
             {isAuthenticated ? (
@@ -160,6 +162,12 @@ const Header = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => (window.location.href = "/api/portal")}
+                  >
+                    <CreditCard className="mr-2 size-4" />
+                    Manage Subscription
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOutIcon className="mr-2 size-4" />
                     Logout

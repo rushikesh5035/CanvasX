@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "lucide-react";
 
 import Logo from "../common/logo";
+import PlanBadge from "../common/plan-badge";
 import ThemeSwitcher from "../common/theme-switcher";
 import { Button } from "../ui/button";
 
@@ -29,6 +30,7 @@ const ProjectHeader = ({ projectName }: { projectName?: string }) => {
           </div>
 
           <div className="flex items-center gap-3">
+            <PlanBadge compact />
             <ThemeSwitcher />
           </div>
         </div>
