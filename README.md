@@ -53,30 +53,45 @@ AI-powered mobile UI/UX design tool that generates beautiful, production-ready m
    Create a `.env` file in the root directory with the following variables:
 
    ```bash
-   # Database
+   # Database (Neon / PostgreSQL)
    DATABASE_URL="postgresql://user:password@localhost:5432/canvasx"
 
-   # Authentication
-   AUTH_SECRET="your-auth-secret-here"
-   AUTH_GOOGLE_ID="your-google-oauth-id"
-   AUTH_GOOGLE_SECRET="your-google-oauth-secret"
+   # Environment
+   NODE_ENV="development"
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+   NEXTAUTH_URL="http://localhost:3000"
 
-   # AI Generation
+   # Authentication (NextAuth + Google OAuth)
+   AUTH_SECRET="your-auth-secret-here"
+   AUTH_GOOGLE_ID="your-google-oauth-client-id"
+   AUTH_GOOGLE_SECRET="your-google-oauth-client-secret"
+
+   # AI Generation (Google Gemini)
    GOOGLE_GENERATIVE_AI_API_KEY="your-gemini-api-key"
 
-   # Image Search
-   UNSPLASH_ACCESS_KEY="your-unsplash-key"
+   # Image Search (Unsplash)
+   UNSPLASH_ACCESS_KEY="your-unsplash-access-key"
 
-   # Redis (Upstash)
+   # Redis (Upstash - Caching & Rate Limiting)
    UPSTASH_REDIS_REST_URL="https://your-redis-url.upstash.io"
    UPSTASH_REDIS_REST_TOKEN="your-redis-token"
 
-   # Inngest (Background Jobs)
+   # Background Jobs (Inngest)
    INNGEST_SIGNING_KEY="your-inngest-signing-key"
    INNGEST_EVENT_KEY="your-inngest-event-key"
 
-   # App URL
-   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+   # Payment Gateway (Polar.sh)
+   POLAR_ACCESS_TOKEN="your-polar-access-token"
+   POLAR_WEBHOOK_SECRET="your-polar-webhook-secret"
+   POLAR_SERVER="sandbox"  # "sandbox" for testing, "production" for live
+
+   # Polar Product IDs (server-side)
+   POLAR_PRO_PRODUCT_ID="your-polar-pro-product-id"
+   POLAR_UNLIMITED_PRODUCT_ID="your-polar-unlimited-product-id"
+
+   # Polar Product IDs (client-side - must match above)
+   NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID="your-polar-pro-product-id"
+   NEXT_PUBLIC_POLAR_UNLIMITED_PRODUCT_ID="your-polar-unlimited-product-id"
    ```
 
 4. **Set up database**
